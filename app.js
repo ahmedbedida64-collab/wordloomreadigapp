@@ -243,6 +243,41 @@ function updateFlowMetric() { document.querySelector('#streak-title').textConten
 function recordReadingPage(page) { const key = `${activeBook.title}:${page.pageNumber}`; if (lastRecordedPage === key) return; lastRecordedPage = key; readingMetrics.words += page.paragraphs.join(' ').split(/\s+/).filter(Boolean).length; readingMetrics.pages += 1; readingMetrics.minutes = Math.max(readingMetrics.minutes, Math.round(readingMetrics.pages * 2)); localStorage.setItem('wordloom-reading-metrics', JSON.stringify(readingMetrics)); updateFlowMetric(); }
 function ensureSlaControls() { const levelBar = document.querySelector('.level-bar'); if (levelBar && !levelBar.querySelector('[data-level="C2"]')) levelBar.insertAdjacentHTML('beforeend', '<button class="level-button" data-level="C2">C2 Proficient</button>'); const sourceLine = document.querySelector('.source-line'); if (sourceLine && !sourceLine.querySelector('.density-signal')) sourceLine.insertAdjacentHTML('beforeend', '<span class="density-signal" id="density-signal">98% familiar words recommended</span>'); const readerFooter = document.querySelector('.reader-footer'); if (readerFooter && !readerFooter.querySelector('#reader-mode')) readerFooter.insertAdjacentHTML('beforeend', '<button class="reader-mode-toggle" id="reader-mode">Speed run</button>'); if (!document.querySelector('#quick-word-popover')) document.body.insertAdjacentHTML('beforeend', '<div class="quick-word-popover hidden" id="quick-word-popover" role="status"></div>'); const levelSelect = document.querySelector('#reader-level'); if (levelSelect && !levelSelect.querySelector('[value="C2"]')) levelSelect.insertAdjacentHTML('beforeend', '<option value="C2">C2 · Proficient</option>'); }
 function renderBooks() { const query = libraryQuery.trim().toLowerCase(); const filtered = books.filter(book => (selectedTopic === 'all' || book.topic === selectedTopic) && (selectedLevel === 'all' || book.level === selectedLevel) && (selectedFilter === 'all' || (selectedFilter === 'progress' && book.progress > 0 && book.progress < 100) || (selectedFilter === 'finished' && book.progress === 100)) && (!query || `${book.title} ${book.topic} ${book.level} ${book.source}`.toLowerCase().includes(query))); grid.innerHTML = filtered.length ? filtered.map(book => { const cover = coverDetails[book.topic] || coverDetails.life; const level = levelDetails[book.level] || levelDetailsC2[book.level] || levelDetails.B1; const description = topicDescriptions[book.topic] || topicDescriptions.life; const photoSet = coverPhotos[book.topic] || coverPhotos.life; const photo = photoSet[coverPhotoIndex[book.title] % photoSet.length]; const familiarity = Math.max(95, Math.min(98, 99 - Math.abs(levelOrder.indexOf(book.level) - levelOrder.indexOf(learnerLevel)))); return `<article class="mini-book"><button class="cover-button" data-book="${book.title}" aria-label="Open ${book.title}"><div class="mini-cover ${book.cover} cover-${book.topic}"><img class="cover-photo" src="${photo}" alt="" loading="lazy" onerror="this.hidden=true;this.parentElement.classList.add('cover-photo-fallback')" /><span class="cover-art"></span><span class="cover-stamp">${cover[0]}</span><span class="cover-glyph">${cover[2]}</span><strong>${book.title}</strong><small>${cover[1]}</small></div></button><div class="mini-info"><div class="book-card-heading"><h3>${book.title}</h3><span class="difficulty-badge level-${book.level.toLowerCase()}">${book.level}</span></div><p class="book-description-small">${description}</p><div class="book-facts"><span>${level.label}</span><span>${familiarity}% familiar</span><span>${book.source}</span></div><div class="book-status"><span style="width:${book.progress}%"></span></div><button class="small-read-button" data-book="${book.title}">${book.progress ? 'Open book' : 'Start reading'} <span>→</span></button></div></article>`; }).join('') : '<p class="empty-state">No books match your search and filters.</p>'; }
+async function downloadLibrary() {
+  const button = document.querySelector('#download-library');
+  const status = document.querySelector('#library-download-status');
+  button.disabled = true;
+  status.textContent = 'Preparing 82 books...';
+  try {
+    const database = await new Promise((resolve, reject) => {
+      const request = indexedDB.open('wordloom-library', 2);
+      request.onupgradeneeded = () => request.result.createObjectStore('books', { keyPath: 'title' });
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+    await new Promise((resolve, reject) => {
+      const transaction = database.transaction('books', 'readwrite');
+      books.forEach((book, index) => {
+        const previousBook = activeBook;
+        activeBook = book;
+        transaction.objectStore('books').put({ ...book, pages: createBookPages(book), downloadedAt: Date.now() });
+        activeBook = previousBook;
+        if (index % 10 === 0) status.textContent = `Preparing ${index + 1} of ${books.length} books...`;
+      });
+      transaction.oncomplete = resolve;
+      transaction.onerror = () => reject(transaction.error);
+    });
+    localStorage.setItem('wordloom-library-downloaded', 'true');
+    status.textContent = 'Ready offline';
+    showToast('All books are ready offline');
+  } catch (error) {
+    status.textContent = 'Download failed';
+    showToast('Could not save the library on this device');
+  } finally {
+    button.disabled = false;
+  }
+}
+
 function renderStory() { document.querySelector('#story-copy').innerHTML = story.split(/(\s+)/).map(part => /^\s+$/.test(part) ? part : `<button class="word" data-word="${part.toLowerCase().replace(/[^a-z]/g, '')}">${part}</button>`).join(''); }
 function buildWordMarkup(text) {
   return text.split(/(\s+)/).map(part => /^\s+$/.test(part) ? part : `<button class="word" data-word="${part.toLowerCase().replace(/[^a-z]/g, '')}">${part}</button>`).join('');
@@ -296,6 +331,8 @@ renderStory();
 renderVocabulary();
 renderNotes();
 document.querySelector('#auth-form').addEventListener('submit', submitAuth);
+document.querySelector('#download-library').addEventListener('click', downloadLibrary);
+if (localStorage.getItem('wordloom-library-downloaded') === 'true') document.querySelector('#library-download-status').textContent = 'Ready offline';
 document.querySelector('#auth-guest').addEventListener('click', () => unlockApp({ email: 'guest@wordloom.local', name: 'Guest reader' }));
 
 document.querySelector('#mother-language').value = motherLanguage; document.querySelector('#reader-level').value = learnerLevel; document.querySelector('#book-graphics').checked = graphicsEnabled; document.querySelector('#color-mode').value = localStorage.getItem('wordloom-mode') || 'light'; document.body.classList.toggle('theme-dark', document.querySelector('#color-mode').value === 'dark'); document.body.classList.toggle('graphics-off', !graphicsEnabled);
