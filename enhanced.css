@@ -165,6 +165,19 @@ h1 { margin-bottom: 0; color: var(--ink); font-size: clamp(34px, 4vw, 58px); lin
   font: 700 11px "DM Sans", sans-serif;
 }
 .level-button.active, .level-button:hover { background: var(--green); color: #fff; }
+.category-bar { display: flex; align-items: center; gap: 7px; max-width: 100%; overflow: auto; padding: 0 0 18px; }
+.category-label { flex: none; margin-right: 5px; color: var(--muted); font: 700 10px "DM Sans", sans-serif; letter-spacing: .08em; text-transform: uppercase; }
+.topic-button { flex: none; border: 1px solid var(--line); border-radius: 999px; padding: 8px 12px; background: rgba(255, 253, 248, .64); color: var(--muted); font: 600 11px "DM Sans", sans-serif; cursor: pointer; }
+.topic-button:hover, .topic-button.active { border-color: var(--coral); background: #fff0e9; color: #a44f3b; }
+body.theme-dark .topic-button { background: var(--paper); color: var(--muted); }
+body.theme-dark .topic-button:hover, body.theme-dark .topic-button.active { border-color: var(--coral); background: #57392f; color: #ffd2c2; }
+.welcome-modal { width: min(470px, calc(100vw - 32px)); padding: clamp(28px, 5vw, 46px); border: 1px solid var(--line); border-radius: 22px; background: var(--paper); box-shadow: 0 30px 80px rgba(13, 49, 43, .22); }
+.welcome-modal h2 { margin: 0 0 12px; font-size: clamp(29px, 5vw, 42px); line-height: .98; }
+.welcome-copy { margin: 0 0 28px; color: var(--muted); line-height: 1.6; }
+.welcome-field { display: grid; gap: 8px; color: var(--muted); font-size: 11px; font-weight: 700; }
+.welcome-field select { padding: 13px; border: 1px solid var(--line); border-radius: 10px; background: var(--paper); color: var(--ink); }
+#finish-welcome { width: 100%; margin-top: 20px; border: 0; border-radius: 10px; padding: 14px 16px; background: var(--green); color: #fff; font: 700 12px "DM Sans", sans-serif; cursor: pointer; }
+#finish-welcome span { margin-left: 10px; font-size: 17px; }
 .library-tools { display: flex; align-items: center; gap: 10px; margin: 0 0 25px; }
 #library-search {
   width: min(340px, 100%);
