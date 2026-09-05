@@ -78,8 +78,21 @@
   <div id="quick-word-popover" hidden></div>
   <div id="dictionary-modal" class="modal-backdrop" hidden><div class="modal"><button data-close-modal type="button">Close</button><div id="dictionary-content"></div></div></div>
   <div id="preferences-modal" class="modal-backdrop" hidden><div class="modal"><button data-close-modal type="button">Close</button><label>Mother language<select id="mother-language"><option value="en">English</option><option value="fr">French</option><option value="es">Spanish</option></select></label><button id="save-preferences" type="button">Save</button></div></div>
+  <div id="source-modal" class="modal-backdrop hidden">
+    <section class="source-modal" role="dialog" aria-modal="true" aria-labelledby="source-title">
+      <div class="source-modal-heading"><div><p class="eyebrow">Build your shelf</p><h2 id="source-title">Where should we look?</h2><p>Choose a source, then add a title to your reading list or import a book from this device.</p></div><button class="modal-close" data-close-modal type="button" aria-label="Close">Close</button></div>
+      <div class="source-grid">
+        <a class="source-card featured" href="#" data-source-url="https://en.wikipedia.org/wiki/Special:Search?search=" data-source-label="Wikipedia"><span class="source-icon">W</span><strong>Wikipedia</strong><span>Adapted articles for curious readers.</span><small>Search articles →</small></a>
+        <a class="source-card" href="https://www.gutenberg.org/ebooks/search/?query=language+learning" target="_blank" rel="noopener" data-source-label="Project Gutenberg"><span class="source-icon">G</span><strong>Project Gutenberg</strong><span>Free public-domain books.</span><small>Browse classics →</small></a>
+        <a class="source-card" href="https://openlibrary.org/search?q=english+reader" target="_blank" rel="noopener" data-source-label="Open Library"><span class="source-icon">O</span><strong>Open Library</strong><span>Millions of library records and loans.</span><small>Find a book →</small></a>
+        <a class="source-card" href="https://archive.org/search?query=english+reader" target="_blank" rel="noopener" data-source-label="Internet Archive"><span class="source-icon">A</span><strong>Internet Archive</strong><span>Open collections and historical texts.</span><small>Explore collections →</small></a>
+        <button class="source-card local" id="import-local-book" type="button"><span class="source-icon">＋</span><strong>From this device</strong><span>Import a PDF or text file privately.</span><small>Choose a file →</small></button>
+      </div>
+      <p class="source-note">External sources open in a new tab. Wordloom only imports files you choose from your own device.</p>
+    </section>
+  </div>
   <div id="streak-detail" hidden></div><div id="streak-title" hidden></div><div id="toast" role="status"></div>
-  <input id="pdf-input" type="file" accept="application/pdf" hidden><button id="import-pdf" hidden type="button">Import PDF</button>
+  <input id="pdf-input" type="file" accept="application/pdf,.txt" hidden><button id="import-pdf" hidden type="button">Import PDF</button>
   <script src="app.js"></script>
   <script>
     if ('serviceWorker' in navigator) {
