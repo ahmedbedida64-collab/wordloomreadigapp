@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Wordloom English Reading Lab</title>
+  <meta name="theme-color" content="#1f6658">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="overrides.css">
+  <link rel="stylesheet" href="enhanced.css">
+  <link rel="stylesheet" href="vocabulary-enhanced.css">
+</head>
+<body>
+  <main id="auth-screen" class="auth-screen">
+    <section class="auth-card">
+      <p class="eyebrow">Wordloom</p>
+      <h1>Read more. Understand more.</h1>
+      <p>Build your English through stories made for your level.</p>
+      <form id="auth-form">
+        <label>Email<input id="auth-email" type="email" autocomplete="email" required></label>
+        <label>Password<input id="auth-password" type="password" autocomplete="current-password" required></label>
+        <p id="auth-error" role="alert"></p>
+        <button type="submit">Sign in</button>
+      </form>
+      <button id="auth-guest" class="text-button" type="button">Continue as guest</button>
+    </section>
+  </main>
+
+  <div class="app-shell auth-locked">
+    <aside class="sidebar">
+      <a class="brand" href="#">Wordloom</a>
+      <nav>
+        <button class="nav-item" data-view="library" type="button">Library</button>
+        <button class="nav-item" data-view="vocabulary" type="button">Vocabulary <span class="nav-count"></span></button>
+        <button class="nav-item" data-view="notes" type="button">Notes</button>
+      </nav>
+      <button class="settings-button" type="button">Settings</button>
+    </aside>
+    <section class="main-content">
+      <header class="topbar">
+        <button class="mobile-menu icon-button" type="button" aria-label="Open menu">Menu</button>
+        <div class="breadcrumb"><strong>Library</strong></div>
+        <div class="top-actions">
+          <button class="icon-button" type="button" aria-label="Open search">Search</button>
+          <button class="icon-button" type="button" aria-label="Toggle color mode" id="color-mode">Mode</button>
+        </div>
+      </header>
+
+      <section id="library-view" class="view">
+        <div class="library-section">
+          <div class="view-heading"><div><p class="eyebrow">Your shelf</p><h1>English reading lab</h1></div><button id="add-book" type="button">Add book</button></div>
+          <div class="continue-reading" id="continue-reading"></div>
+          <div class="level-bar"><button class="level-button" data-level="all" type="button">All</button><button class="level-button" data-level="A1" type="button">A1</button><button class="level-button" data-level="A2" type="button">A2</button><button class="level-button" data-level="B1" type="button">B1</button><button class="level-button" data-level="B2" type="button">B2</button><button class="level-button" data-level="C1" type="button">C1</button></div>
+          <div class="library-tools"><input id="library-search" type="search" placeholder="Search books"><button class="filter-icon icon-button" type="button">Filter</button></div>
+          <div id="book-grid" class="book-grid"></div>
+        </div>
+      </section>
+
+      <section id="reading-view" class="view hidden">
+        <button id="back-to-library" class="text-button" type="button">Back to library</button>
+        <div class="reading-meta"><span class="reading-author"></span><span class="source-line"></span></div>
+        <h1></h1><label class="reader-level">Level<select id="reader-level"><option value="A1">A1</option><option value="A2">A2</option><option value="B1">B1</option><option value="B2">B2</option><option value="C1">C1</option></select></label><button class="reader-mode" id="reader-mode" type="button">Speed run</button>
+        <label class="book-graphics"><input id="book-graphics" type="checkbox" checked> Visual guide</label><article id="story-copy"></article>
+        <div class="reader-footer"><span class="reader-status"></span><span class="reading-progress"><span></span></span></div>
+        <div class="reader-controls"><button class="reader-control" type="button">Previous</button><button class="reader-control" type="button">Next</button></div>
+      </section>
+
+      <section id="vocabulary-view" class="view hidden"><div class="vocab-heading"><div><p class="eyebrow">Your language bank</p><h1>Vocabulary garden</h1></div><div class="vocab-stat"><strong id="saved-word-count">0</strong><span>words ready to review</span></div></div><div class="vocab-toolbar"><input id="vocab-search" type="search" placeholder="Search saved words"><div class="vocab-filters"><button class="vocab-filter active" data-level="all" type="button">All</button><button class="vocab-filter" data-level="A2" type="button">A2</button><button class="vocab-filter" data-level="B1" type="button">B1</button><button class="vocab-filter" data-level="B2" type="button">B2</button></div></div><div id="word-list"></div></section>
+      <section id="notes-view" class="view hidden"><h1>Notes</h1><button id="new-note" type="button">New note</button><div id="notes-list"></div></section>
+    </section>
+  </div>
+
+  <div id="quick-word-popover" hidden></div>
+  <div id="dictionary-modal" class="modal-backdrop" hidden><div class="modal"><button data-close-modal type="button">Close</button><div id="dictionary-content"></div></div></div>
+  <div id="preferences-modal" class="modal-backdrop" hidden><div class="modal"><button data-close-modal type="button">Close</button><label>Mother language<select id="mother-language"><option value="en">English</option><option value="fr">French</option><option value="es">Spanish</option></select></label><button id="save-preferences" type="button">Save</button></div></div>
+  <div id="streak-detail" hidden></div><div id="streak-title" hidden></div><div id="toast" role="status"></div>
+  <input id="pdf-input" type="file" accept="application/pdf" hidden><button id="import-pdf" hidden type="button">Import PDF</button>
+  <script src="app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js'));
+    }
+  </script>
+</body>
+</html>
