@@ -87,6 +87,7 @@ button:active { transform: translateY(1px); }
 .breadcrumb { color: var(--muted); font: 600 13px "Space Grotesk", sans-serif; }
 .breadcrumb strong { color: var(--ink); }
 .top-actions { gap: 10px; }
+.top-actions .settings-button { width: auto; margin-top: 0; }
 .icon-button, .mobile-menu {
   min-height: 38px;
   padding: 0 13px;
