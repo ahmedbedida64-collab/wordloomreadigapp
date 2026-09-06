@@ -296,3 +296,104 @@ body.theme-dark .topic-button:hover, body.theme-dark .topic-button.active { bord
 .modal { width: min(430px, calc(100vw - 32px)); max-height: calc(100vh - 32px); overflow: auto; padding: 24px; border: 1px solid var(--line); border-radius: 18px; background: var(--paper); color: var(--ink); box-shadow: 0 28px 70px rgba(13, 49, 43, .24); }
 .modal > button:first-child { float: right; border: 1px solid var(--line); border-radius: 8px; padding: 7px 9px; background: transparent; color: var(--muted); font-size: 10px; cursor: pointer; }
 .modal .context-box { clear: both; margin-top: 16px; }
+
+.small-read-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 46px;
+  margin-top: 16px;
+  padding: 12px 14px;
+  border: 1px solid var(--green);
+  border-radius: 10px;
+  background: var(--green);
+  color: #fff;
+  font: 700 11px "DM Sans", sans-serif;
+  cursor: pointer;
+  box-shadow: 0 7px 15px rgba(31, 102, 88, .14);
+}
+.small-read-button span { font-size: 17px; line-height: 1; transition: transform .2s ease; }
+.small-read-button:hover { border-color: var(--green-dark); background: var(--green-dark); transform: translateY(-2px); }
+.small-read-button:hover span { transform: translateX(3px); }
+.small-read-button:focus-visible { outline: 3px solid rgba(226, 118, 95, .45); outline-offset: 3px; }
+
+#reading-view h1 { margin: 16px 0 14px; line-height: 1.05; }
+#reading-view .reader-level,
+#reading-view .reader-mode,
+#reading-view .book-graphics { vertical-align: middle; }
+#reading-view .reader-level { display: inline-flex; align-items: center; gap: 8px; }
+#reading-view .reader-mode { min-height: 38px; margin-left: 8px; }
+#reading-view .book-graphics { display: inline-flex; align-items: center; gap: 7px; margin-left: 8px; }
+
+@media (max-width: 700px) {
+  .topbar {
+    display: grid;
+    grid-template-columns: 34px minmax(0, 1fr) 112px;
+    align-items: center;
+    gap: 8px;
+    min-height: 68px;
+  }
+  .mobile-menu {
+    display: inline-grid;
+    width: 34px;
+    min-width: 34px;
+    height: 38px;
+    padding: 0;
+    place-items: center;
+    overflow: hidden;
+    font-size: 0 !important;
+    line-height: 0;
+  }
+  .mobile-menu::before { content: "☰"; font-size: 18px; line-height: 1; }
+  .top-actions {
+    display: grid;
+    grid-template-columns: repeat(3, 34px);
+    gap: 5px;
+    width: 112px;
+  }
+  .top-actions .icon-button,
+  .top-actions .settings-button {
+    display: inline-grid;
+    width: 34px;
+    min-width: 34px;
+    height: 34px;
+    min-height: 34px;
+    padding: 0;
+    place-items: center;
+    overflow: hidden;
+    font-size: 0 !important;
+    line-height: 0;
+  }
+  .top-actions .settings-button::before { content: "⚙"; font-size: 16px; line-height: 1; }
+  .top-actions .icon-button:nth-child(2)::before { content: "⌕"; font-size: 22px; line-height: 1; }
+  .top-actions .icon-button:nth-child(3)::before { content: "◐"; font-size: 18px; line-height: 1; }
+  #reading-view h1 { margin: 14px 0 16px; font-size: 34px; line-height: 1.06; }
+  #reading-view .reader-level {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    width: 100%;
+    gap: 8px;
+    min-height: 42px;
+    margin: 0 0 8px;
+    padding: 8px 10px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: rgba(255, 253, 248, .66);
+  }
+  #reading-view .reader-level select { min-width: 0; width: 100%; }
+  #reading-view .reader-mode,
+  #reading-view .book-graphics {
+    width: 100%;
+    min-height: 42px;
+    margin: 0 0 8px;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--paper);
+  }
+  #reading-view .reader-mode { color: var(--green); font-weight: 700; }
+  #reading-view .book-graphics { justify-content: space-between; color: var(--muted); font-size: 11px; }
+  .reader-controls { gap: 8px; }
+  .reader-control { flex: 1; min-height: 42px; border: 1px solid var(--line); border-radius: 9px; background: var(--paper); font-weight: 700; }
+}
