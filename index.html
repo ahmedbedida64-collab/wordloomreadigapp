@@ -47,7 +47,6 @@
         <div class="top-actions">
           <button class="settings-button icon-button" type="button" aria-label="Open settings">Settings</button>
           <button class="icon-button" type="button" aria-label="Open search">Search</button>
-          <button class="icon-button" type="button" aria-label="Toggle color mode" id="color-mode" aria-pressed="false">Dark mode</button>
         </div>
       </header>
 
@@ -65,8 +64,7 @@
       <section id="reading-view" class="view hidden">
         <button id="back-to-library" class="text-button" type="button">Back to library</button>
         <div class="reading-meta"><span class="reading-author"></span><span class="source-line"></span></div>
-        <h1></h1><label class="reader-level">Level<select id="reader-level"><option value="A1">A1</option><option value="A2">A2</option><option value="B1">B1</option><option value="B2">B2</option><option value="C1">C1</option></select></label><button class="reader-mode" id="reader-mode" type="button">Speed run</button>
-        <label class="book-graphics"><input id="book-graphics" type="checkbox" checked> Visual guide</label><article id="story-copy"></article><section id="comprehension-panel" class="comprehension-panel hidden" aria-live="polite"></section>
+        <h1></h1><div class="reader-options"><label class="reader-level">Level<select id="reader-level"><option value="A1">A1</option><option value="A2">A2</option><option value="B1">B1</option><option value="B2">B2</option><option value="C1">C1</option></select></label><button class="reader-mode" id="reader-mode" type="button">Speed run</button><label class="book-graphics"><input id="book-graphics" type="checkbox" checked><span class="graphics-icon" aria-hidden="true">✦</span><span>Visual guide</span></label></div><article id="story-copy"></article><section id="comprehension-panel" class="comprehension-panel hidden" aria-live="polite"></section>
         <div class="reader-footer"><span class="reader-status"></span><span class="reading-progress"><span></span></span></div>
         <div class="reader-controls"><button class="reader-control" type="button">Previous</button><button class="reader-control" type="button">Next</button></div>
       </section>
@@ -78,7 +76,7 @@
 
   <div id="quick-word-popover" hidden></div>
   <div id="dictionary-modal" class="modal-backdrop" hidden><div class="modal"><button data-close-modal type="button">Close</button><div id="dictionary-content"></div></div></div>
-  <div id="preferences-modal" class="modal-backdrop hidden"><div class="modal"><button data-close-modal type="button">Close</button><label>Mother language<select id="mother-language"><option value="ar">العربية</option><option value="en">English</option><option value="fr">français</option><option value="es">español</option><option value="tr">Türkçe</option><option value="de">Deutsch</option></select></label><button id="save-preferences" type="button">Save</button></div></div>
+  <div id="preferences-modal" class="modal-backdrop hidden"><div class="modal settings-modal"><button data-close-modal type="button">Close</button><div class="settings-heading"><span class="eyebrow">Your reading room</span><h2>Settings</h2><p>Shape Wordloom around the way you learn.</p></div><label>Mother language<select id="mother-language"><option value="ar">العربية</option><option value="en">English</option><option value="fr">français</option><option value="es">español</option><option value="tr">Türkçe</option><option value="de">Deutsch</option></select></label><label>Color mode<select id="color-mode-setting"><option value="light">Light mode</option><option value="dark">Dark mode</option></select></label><button id="save-preferences" type="button">Save settings</button></div></div>
   <div id="welcome-modal" class="modal-backdrop hidden"><section class="welcome-modal" role="dialog" aria-modal="true" aria-labelledby="welcome-title"><p class="eyebrow">Your reading room</p><h2 id="welcome-title">Let’s make Wordloom yours.</h2><p class="welcome-copy">Choose your mother language so definitions and translations feel natural from the very first page.</p><label class="welcome-field" for="welcome-language">Mother language<select id="welcome-language"><option value="ar">العربية · Arabic</option><option value="en">English</option><option value="fr">français · French</option><option value="es">español · Spanish</option><option value="tr">Türkçe · Turkish</option><option value="de">Deutsch · German</option></select></label><button id="finish-welcome" type="button">Start reading <span>→</span></button></section></div>
   <div id="source-modal" class="modal-backdrop hidden">
     <section class="source-modal" role="dialog" aria-modal="true" aria-labelledby="source-title">
