@@ -13,7 +13,7 @@
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="overrides.css">
   <link rel="stylesheet" href="enhanced.css">
-  <link rel="stylesheet" href="vocabulary-enhanced.css">
+  <link rel="stylesheet" href="vocabulary-enhanced.css?version=6">
 </head>
 <body>
   <main id="auth-screen" class="auth-screen">
@@ -34,49 +34,80 @@
   <div class="app-shell auth-locked">
     <aside class="sidebar">
       <a class="brand" href="#">Wordloom</a>
-      <nav>
-        <button class="nav-item" data-view="library" type="button">Library</button>
-        <button class="nav-item" data-view="vocabulary" type="button">Vocabulary <span class="nav-count"></span></button>
-        <button class="nav-item" data-view="notes" type="button">Notes</button>
+      <nav aria-label="Main navigation">
+        <button class="nav-item" data-view="library" type="button"><span class="nav-symbol" aria-hidden="true">▥</span><span>Library</span></button>
+        <button class="nav-item" data-view="vocabulary" type="button"><span class="nav-symbol" aria-hidden="true">↻</span><span>Review</span><span class="nav-count"></span></button>
+        <button class="nav-item" data-view="play" type="button"><span class="nav-symbol" aria-hidden="true">▷</span><span>Play</span></button>
       </nav>
     </aside>
     <section class="main-content">
       <header class="topbar">
-        <button class="mobile-menu icon-button" type="button" aria-label="Open menu">Menu</button>
+          <button class="mobile-menu icon-button" type="button" aria-label="Open menu">☰</button>
         <div class="breadcrumb"><strong>Library</strong></div>
         <div class="top-actions">
-          <button class="settings-button icon-button" type="button" aria-label="Open settings">Settings</button>
-          <button class="icon-button" type="button" aria-label="Open search">Search</button>
+          <button class="settings-button icon-button" type="button" aria-label="Open settings">⚙</button>
+          <button class="icon-button" type="button" aria-label="Open search">⌕</button>
         </div>
       </header>
 
       <section id="library-view" class="view">
         <div class="library-section">
-          <div class="view-heading"><div><p class="eyebrow">Your shelf</p><h1>English reading lab</h1></div><div class="library-actions"><button id="download-library" type="button"><span>Download library</span><small id="library-download-status">Available offline</small></button><button id="add-book" type="button">Add book</button></div></div>
-          <div class="continue-reading" id="continue-reading"></div><section class="reading-stats" aria-label="Reading stats"><div><strong id="stats-minutes">0</strong><span>minutes read</span></div><div><strong id="stats-lookups">0</strong><span>words looked up</span></div><div><strong id="stats-streak">0</strong><span>day streak</span></div></section>
-          <div class="level-bar"><button class="level-button" data-level="all" type="button">All</button><button class="level-button" data-level="A1" type="button">A1</button><button class="level-button" data-level="A2" type="button">A2</button><button class="level-button" data-level="B1" type="button">B1</button><button class="level-button" data-level="B2" type="button">B2</button><button class="level-button" data-level="C1" type="button">C1</button></div>
-          <div class="category-bar" aria-label="Book categories"><span class="category-label">Browse by topic</span><button class="topic-button active" data-topic="all" type="button">All topics</button><button class="topic-button" data-topic="life" type="button">Everyday life</button><button class="topic-button" data-topic="travel" type="button">Travel</button><button class="topic-button" data-topic="science" type="button">Science</button><button class="topic-button" data-topic="history" type="button">History</button><button class="topic-button" data-topic="culture" type="button">Culture</button><button class="topic-button" data-topic="technology" type="button">Technology</button><button class="topic-button" data-topic="business" type="button">Business</button></div>
-          <div class="library-tools"><input id="library-search" type="search" placeholder="Search books"><button class="filter-icon icon-button" type="button">Filter</button></div>
+          <div class="view-heading"><div><p class="eyebrow">Your shelf</p><h1>Library</h1></div></div>
+          <section class="reading-streak" aria-label="Your reading streak"><span class="streak-fire" role="img" aria-label="Fire">🔥</span><div><strong id="streak-count">Start your streak</strong><span id="streak-message">Read today, then return tomorrow to keep the flame going.</span></div></section>
+          <div class="library-tools"><input id="library-search" type="search" placeholder="Search books"><button id="library-filter-toggle" class="filter-icon icon-button" type="button" aria-expanded="false" aria-controls="library-level-filter">Levels</button></div>
+          <div id="library-level-filter" class="library-level-filter hidden" role="toolbar" aria-label="Filter books by level">
+            <button class="level-button active" data-level="all" type="button" aria-pressed="true">All</button>
+            <button class="level-button" data-level="A1" type="button" aria-pressed="false">A1</button>
+            <button class="level-button" data-level="A2" type="button" aria-pressed="false">A2</button>
+            <button class="level-button" data-level="B1" type="button" aria-pressed="false">B1</button>
+            <button class="level-button" data-level="B2" type="button" aria-pressed="false">B2</button>
+            <button class="level-button" data-level="C1" type="button" aria-pressed="false">C1</button>
+          </div>
+          <div class="library-tabs" aria-label="Library views">
+            <button class="library-tab active" data-library-tab="all" type="button">All</button>
+            <button class="library-tab" data-library-tab="favorites" type="button">Favorites</button>
+            <button class="library-tab" data-library-tab="history" type="button">Reading history</button>
+          </div>
           <div id="book-grid" class="book-grid"></div>
         </div>
       </section>
 
+      <section id="play-view" class="view hidden">
+        <div class="view-heading"><div><p class="eyebrow">Practice and play</p><h1>Language games</h1></div></div>
+        <div class="game-grid">
+          <article class="game-card" data-play-card="phoneme">
+            <div class="game-card-summary"><div class="game-cover game-cover-phoneme" aria-hidden="true"><strong>♫</strong><small>sound</small></div><div><p class="game-kicker">Listen &amp; build</p><h2>Complete a word</h2><p>Choose the missing letter by sound.</p></div><button class="game-launch" data-play-launch="phoneme" type="button" aria-controls="phoneme-panel" aria-expanded="false">Start</button></div>
+            <div id="phoneme-panel" class="phoneme-panel" aria-live="polite"></div>
+          </article>
+          <article class="game-card" data-play-card="scramble">
+            <div class="game-card-summary"><div class="game-cover game-cover-scramble" aria-hidden="true"><strong>≡</strong><small>order</small></div><div><p class="game-kicker">Words &amp; order</p><h2>Build a sentence</h2><p>Put the words into a natural order.</p></div><button class="game-launch" data-play-launch="scramble" type="button" aria-controls="scramble-panel" aria-expanded="false">Start</button></div>
+            <div id="scramble-panel" class="scramble-panel" aria-live="polite"></div>
+          </article>
+          <article class="game-card" data-play-card="recall">
+            <div class="game-card-summary"><div class="game-cover game-cover-recall" aria-hidden="true"><strong>◉</strong><small>listen</small></div><div><p class="game-kicker">Listen &amp; recall</p><h2>Hear and choose</h2><p>Hear the word, then find it quickly.</p></div><button class="game-launch" data-play-launch="recall" type="button" aria-controls="recall-panel" aria-expanded="false">Start</button></div>
+            <div id="recall-panel" class="recall-panel" aria-live="polite"></div>
+          </article>
+        </div>
+      </section>
+
       <section id="reading-view" class="view hidden">
-        <button id="back-to-library" class="text-button" type="button">Back to library</button>
+        <div class="reader-top-actions">
+          <button id="back-to-library" class="text-button" type="button">← Go back</button>
+        </div>
+        <div id="reader-preview" class="reader-preview"></div>
         <div class="reading-meta"><span class="reading-author"></span><span class="source-line"></span></div>
-        <h1></h1><div class="reader-options"><label class="reader-level">Level<select id="reader-level"><option value="A1">A1</option><option value="A2">A2</option><option value="B1">B1</option><option value="B2">B2</option><option value="C1">C1</option></select></label><button class="reader-mode" id="reader-mode" type="button">Speed run</button></div><article id="story-copy"></article><section id="comprehension-panel" class="comprehension-panel hidden" aria-live="polite"></section>
+        <h1></h1><article id="story-copy"></article><section id="comprehension-panel" class="comprehension-panel hidden" aria-live="polite"></section>
         <div class="reader-footer"><span class="reader-status"></span><span class="reading-progress"><span></span></span></div>
         <div class="reader-controls"><button class="reader-control" type="button">Previous</button><button class="reader-control" type="button">Next</button></div>
       </section>
 
-      <section id="vocabulary-view" class="view hidden"><div class="vocab-heading"><div><p class="eyebrow">Your language bank</p><h1>Vocabulary garden</h1></div><div class="vocab-stat"><strong id="saved-word-count">0</strong><span>words ready to review</span></div></div><div class="vocab-toolbar"><input id="vocab-search" type="search" placeholder="Search saved words"><div class="vocab-filters"><button class="vocab-filter active" data-level="all" type="button">All</button><button class="vocab-filter" data-level="A2" type="button">A2</button><button class="vocab-filter" data-level="B1" type="button">B1</button><button class="vocab-filter" data-level="B2" type="button">B2</button></div><button id="export-vocabulary" class="text-button" type="button">Export CSV</button></div><div id="word-list"></div></section>
-      <section id="notes-view" class="view hidden"><h1>Notes</h1><button id="new-note" type="button">New note</button><div id="notes-list"></div></section>
+      <section id="vocabulary-view" class="view hidden"><div class="vocab-heading"><div><p class="eyebrow">Your language bank</p><h1>Review</h1><p class="view-intro">Choose the translation that matches the English word.</p></div><div class="vocab-stat"><strong id="saved-word-count">0</strong><span>to review</span></div></div><div class="vocab-toolbar"><span class="review-instruction">English word and translation</span></div><section id="flashcard-stage" class="flashcard-stage" aria-live="polite"></section></section>
     </section>
   </div>
 
   <div id="quick-word-popover" hidden></div>
-  <div id="dictionary-modal" class="modal-backdrop" hidden><div class="modal"><button data-close-modal type="button">Close</button><div id="dictionary-content"></div></div></div>
-  <div id="preferences-modal" class="modal-backdrop hidden"><div class="modal settings-modal"><button data-close-modal type="button">Close</button><div class="settings-heading"><span class="eyebrow">Your reading room</span><h2>Settings</h2><p>Shape Wordloom around the way you learn.</p></div><label>Mother language<select id="mother-language"><option value="ar">العربية</option><option value="en">English</option><option value="fr">français</option><option value="es">español</option><option value="tr">Türkçe</option><option value="de">Deutsch</option></select></label><label>Color mode<select id="color-mode-setting"><option value="light">Light mode</option><option value="dark">Dark mode</option></select></label><button id="save-preferences" type="button">Save settings</button></div></div>
+  <div id="dictionary-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="dictionary-title" aria-hidden="true" hidden><div class="modal"><button data-close-modal type="button">Close</button><div id="dictionary-content"></div></div></div>
+  <div id="preferences-modal" class="modal-backdrop hidden"><div class="modal settings-modal"><button data-close-modal type="button">Close</button><div class="settings-heading"><span class="eyebrow">Your reading room</span><h2>Settings</h2><p>Shape Wordloom around the way you learn.</p></div><label>Mother language<select id="mother-language"><option value="ar">العربية</option><option value="en">English</option><option value="fr">français</option><option value="es">español</option><option value="tr">Türkçe</option><option value="de">Deutsch</option></select></label><label>Color mood<select id="color-mode-setting"><option value="fern">Fern</option><option value="coral">Coral</option><option value="sky">Sky</option><option value="amber">Amber</option></select></label><button id="save-preferences" type="button">Save settings</button></div></div>
   <div id="welcome-modal" class="modal-backdrop hidden"><section class="welcome-modal" role="dialog" aria-modal="true" aria-labelledby="welcome-title"><p class="eyebrow">Your reading room</p><h2 id="welcome-title">Let’s make Wordloom yours.</h2><p class="welcome-copy">Choose your mother language so definitions and translations feel natural from the very first page.</p><label class="welcome-field" for="welcome-language">Mother language<select id="welcome-language"><option value="ar">العربية · Arabic</option><option value="en">English</option><option value="fr">français · French</option><option value="es">español · Spanish</option><option value="tr">Türkçe · Turkish</option><option value="de">Deutsch · German</option></select></label><button id="finish-welcome" type="button">Start reading <span>→</span></button></section></div>
   <div id="source-modal" class="modal-backdrop hidden">
     <section class="source-modal" role="dialog" aria-modal="true" aria-labelledby="source-title">
@@ -93,7 +124,8 @@
   </div>
   <div id="streak-detail" hidden></div><div id="streak-title" hidden></div><div id="toast" role="status"></div>
   <input id="pdf-input" type="file" accept="application/pdf,.txt" hidden><button id="import-pdf" hidden type="button">Import PDF</button>
-  <script src="app.js"></script>
+  <script type="module" src="game-module.js?version=2"></script>
+  <script src="app.js?version=7"></script>
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js'));

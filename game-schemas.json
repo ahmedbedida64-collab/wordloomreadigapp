@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "level": {
+    "type": "object",
+    "required": ["id", "gameType", "difficulty", "content"],
+    "properties": {
+      "id": { "type": "string" },
+      "gameType": { "type": "string", "enum": ["phoneme", "context", "scramble", "recall"] },
+      "difficulty": { "type": "string", "enum": ["A1", "A2", "B1", "B2", "C1"] },
+      "content": { "type": "array" }
+    }
+  },
+  "word": {
+    "type": "object",
+    "required": ["word", "meaning", "level"],
+    "properties": {
+      "word": { "type": "string" },
+      "meaning": { "type": "string" },
+      "level": { "type": "string" }
+    }
+  },
+  "phoneme": {
+    "type": "object",
+    "required": ["word", "grapheme", "phoneme", "spokenPhoneme", "audioAssetId"],
+    "properties": {
+      "word": { "type": "string" },
+      "grapheme": { "type": "string" },
+      "phoneme": { "type": "string" },
+      "spokenPhoneme": { "type": "string" },
+      "audioAssetId": { "type": "string" }
+    }
+  },
+  "audioAsset": {
+    "type": "object",
+    "required": ["id", "text", "locale"],
+    "properties": {
+      "id": { "type": "string" },
+      "text": { "type": "string" },
+      "locale": { "type": "string" },
+      "src": { "type": ["string", "null"] }
+    }
+  },
+  "distractorPool": {
+    "type": "object",
+    "required": ["target", "items", "basis"],
+    "properties": {
+      "target": { "type": "string" },
+      "items": { "type": "array", "items": { "type": "string" } },
+      "basis": { "type": "string", "enum": ["phonological", "semantic"] }
+    }
+  },
+  "gameConfig": {
+    "type": "object",
+    "required": ["ageBand", "difficultyTier", "contentPackId", "maxAttemptsBeforeReveal"],
+    "properties": {
+      "ageBand": { "type": "string", "enum": ["3-5", "6-8", "9-12"] },
+      "difficultyTier": { "type": "integer" },
+      "contentPackId": { "type": "string" },
+      "maxAttemptsBeforeReveal": { "type": "integer" },
+      "timerMs": { "type": ["integer", "null"] },
+      "optionCount": { "type": ["integer", "null"] }
+    }
+  },
+  "wordImageItem": {
+    "type": "object",
+    "required": ["id", "wordId", "promptAudioId", "promptText", "correctOptionId", "options"],
+    "properties": {
+      "id": { "type": "string" },
+      "wordId": { "type": "string" },
+      "promptAudioId": { "type": "string" },
+      "promptText": { "type": "string" },
+      "correctOptionId": { "type": "string" },
+      "options": { "type": "array" }
+    }
+  },
+  "sentenceItem": {
+    "type": "object",
+    "required": ["id", "targetMeaningPrompt", "tokens", "acceptedSequences"],
+    "properties": {
+      "id": { "type": "string" },
+      "targetMeaningPrompt": { "type": "string" },
+      "tokens": { "type": "array" },
+      "acceptedSequences": { "type": "array" },
+      "acceptedPatterns": { "type": "array" }
+    }
+  },
+  "recallItem": {
+    "type": "object",
+    "required": ["id", "audioId", "correctOptionId", "options"],
+    "properties": {
+      "id": { "type": "string" },
+      "audioId": { "type": "string" },
+      "correctOptionId": { "type": "string" },
+      "options": { "type": "array" }
+    }
+  }
+}

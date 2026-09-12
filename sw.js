@@ -1,4 +1,4 @@
-const CACHE_NAME = 'wordloom-shell-v3';
+const CACHE_NAME = 'wordloom-shell-v14';
 const APP_SHELL = [
   './',
   './index.html',
@@ -7,6 +7,7 @@ const APP_SHELL = [
   './enhanced.css',
   './vocabulary-enhanced.css',
   './app.js',
+  './game-module.js',
   './manifest.json',
   './icon.svg'
 ];

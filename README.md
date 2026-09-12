@@ -30,6 +30,17 @@ Upload this folder to any static host. The entry point is `index.html`.
 
 The app uses Google Fonts and Unsplash cover images, so the deployed site needs normal outbound HTTPS access. User preferences, notes, saved words, and the demo sign-in session are stored in the browser's local storage on each device. The current login is a front-end demo gate; connect it to a real authentication provider before using real user accounts.
 
+## Game module and QA
+
+The game domain is split into a dependency-free module and browser adapters:
+
+- `game-module.js`: FSM, pure game engines, completion queue, and fixture validation.
+- `game-schemas.json`: schemas for levels, words, phonemes, audio assets, and distractor pools.
+- `game-fixtures.json`: sample A1 through C1 vocabulary and game data.
+- `qa-self-audit.html` and `qa-self-audit.js`: executable three-loop QA harness.
+
+The state machine is `INIT -> READY -> PLAYING -> EVALUATING -> FEEDBACK -> COMPLETED`. Game controls are unavailable during evaluation and feedback. To run the complete audit, serve the folder with a static server and open `/qa-self-audit.html`; opening it directly as a `file:` URL blocks JSON fixture fetches in some browsers.
+
 ## Future product layers
 
 1. Persist books, notes, and vocabulary with a local database.

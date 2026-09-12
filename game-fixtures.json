@@ -1,0 +1,91 @@
+{
+  "configs": [
+    { "ageBand": "3-5", "difficultyTier": 1, "contentPackId": "starter-phonics", "maxAttemptsBeforeReveal": 4, "timerMs": null, "optionCount": 3 },
+    { "ageBand": "6-8", "difficultyTier": 3, "contentPackId": "everyday-english", "maxAttemptsBeforeReveal": 4, "timerMs": 4200, "optionCount": 4 },
+    { "ageBand": "9-12", "difficultyTier": 5, "contentPackId": "reading-lab", "maxAttemptsBeforeReveal": 4, "timerMs": 3000, "optionCount": 5 }
+  ],
+  "levels": [
+    { "id": "phoneme-a1", "gameType": "phoneme", "difficulty": "A1", "content": ["city", "nature"] },
+    { "id": "context-a2", "gameType": "context", "difficulty": "A2", "content": ["familiar", "steady"] },
+    { "id": "scramble-b1", "gameType": "scramble", "difficulty": "B1", "content": ["the lighthouse keeps ships safe"] },
+    { "id": "recall-b2", "gameType": "recall", "difficulty": "B2", "content": ["visibility", "distant"] },
+    { "id": "recall-c1", "gameType": "recall", "difficulty": "C1", "content": ["continuity", "guidance"] }
+  ],
+  "words": [
+    { "word": "city", "meaning": "a large populated place with streets and buildings", "level": "A1" },
+    { "word": "nature", "meaning": "the natural world around us", "level": "A2" },
+    { "word": "familiar", "meaning": "well known from experience", "level": "A2" },
+    { "word": "steady", "meaning": "firm and not changing", "level": "B1" },
+    { "word": "visibility", "meaning": "how clearly something can be seen", "level": "B2" },
+    { "word": "continuity", "meaning": "the state of continuing without interruption", "level": "C1" },
+    { "word": "guidance", "meaning": "help or advice that shows the way", "level": "C1" }
+  ],
+  "phonemes": [
+    { "word": "city", "grapheme": "C", "phoneme": "/s/", "spokenPhoneme": "sss", "audioAssetId": "phoneme-c-s" },
+    { "word": "nature", "grapheme": "A", "phoneme": "/eɪ/", "spokenPhoneme": "ay", "audioAssetId": "phoneme-a-long" }
+  ],
+  "audioAssets": [
+    { "id": "phoneme-c-s", "text": "sss", "locale": "en-US", "src": null },
+    { "id": "phoneme-a-long", "text": "ay", "locale": "en-US", "src": null },
+    { "id": "word-city", "text": "city", "locale": "en-US", "src": null },
+    { "id": "word-nature", "text": "nature", "locale": "en-US", "src": null },
+    { "id": "word-visibility", "text": "visibility", "locale": "en-US", "src": null }
+  ],
+  "distractorPools": [
+    { "target": "visibility", "items": ["emotion", "value"], "basis": "semantic" },
+    { "target": "steady", "items": ["distant", "familiar"], "basis": "semantic" },
+    { "target": "city", "items": ["nature", "emotion"], "basis": "semantic" }
+  ],
+  "context": [
+    { "word": "visibility", "scene": "foggy-road", "hint": "Think about how clearly the scene can be seen.", "options": ["visibility", "emotion", "value"] },
+    { "word": "steady", "scene": "still-candle", "hint": "Choose the word for something firm and not changing.", "options": ["steady", "distant", "familiar"] }
+  ],
+  "scramble": [
+    { "word": "the lighthouse keeps ships safe", "tiles": ["keeps", "the", "lighthouse", "ships", "safe"], "accepted": [["the", "lighthouse", "keeps", "ships", "safe"]] }
+  ],
+  "recall": [
+    { "word": "distant", "options": ["distant", "steady", "familiar", "value"] },
+    { "word": "visibility", "options": ["visibility", "emotion", "nature", "city"] }
+  ],
+  "wordImageItems": [
+    {
+      "id": "scene-visibility",
+      "wordId": "visibility",
+      "promptAudioId": "word-visibility",
+      "promptText": "Choose the word for seeing clearly.",
+      "correctOptionId": "foggy-road",
+      "options": [
+        { "id": "foggy-road", "imageAsset": "scene-foggy-road", "isDistractor": false, "distractorType": null },
+        { "id": "storm-sound", "imageAsset": "scene-storm", "isDistractor": true, "distractorType": "semantic" },
+        { "id": "bright-color", "imageAsset": "scene-color", "isDistractor": true, "distractorType": "visual" }
+      ]
+    }
+  ],
+  "sentenceItems": [
+    {
+      "id": "sentence-lighthouse",
+      "word": "guidance",
+      "targetMeaningPrompt": "A sentence about a lighthouse keeping ships safe.",
+      "tokens": [
+        { "id": "the", "text": "the", "audioId": "word-the", "pos": "DET" },
+        { "id": "lighthouse", "text": "lighthouse", "audioId": "word-lighthouse", "pos": "NOUN" },
+        { "id": "keeps", "text": "keeps", "audioId": "word-keeps", "pos": "VERB" },
+        { "id": "ships", "text": "ships", "audioId": "word-ships", "pos": "NOUN" },
+        { "id": "safe", "text": "safe", "audioId": "word-safe", "pos": "ADJ" }
+      ],
+      "acceptedSequences": [["the", "lighthouse", "keeps", "ships", "safe"]],
+      "acceptedPatterns": [[
+        { "allowedPOS": ["DET"] }, { "allowedPOS": ["NOUN"] }, { "allowedPOS": ["VERB"] }, { "allowedPOS": ["NOUN"] }, { "allowedPOS": ["ADJ"] }
+      ]]
+    }
+  ],
+  "recallItems": [
+    {
+      "id": "recall-distant",
+      "wordId": "distant",
+      "audioId": "word-distant",
+      "correctOptionId": "distant",
+      "options": ["distant", "steady", "familiar", "value"]
+    }
+  ]
+}

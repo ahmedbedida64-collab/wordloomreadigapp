@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Wordloom Game QA Audit</title>
+  <style>
+    :root { color-scheme: dark; font: 16px/1.5 system-ui, sans-serif; background: #090d18; color: #e5ecff; }
+    body { max-width: 760px; margin: 0 auto; padding: 40px 20px; }
+    h1 { font-size: 28px; }
+    #status { padding: 18px; border: 1px solid #344268; border-radius: 12px; background: #121a2f; }
+    li { margin: 10px 0; }
+    .pass { color: #7ee2a8; }
+    .fail { color: #ff9da8; }
+    code { color: #a9b8ff; }
+  </style>
+</head>
+<body>
+  <h1>Wordloom game QA audit</h1>
+  <p>Runs the three mandatory self-verification loops against the checked-in schemas and fixtures.</p>
+  <div id="status" role="status">Running audit...</div>
+  <script type="module">
+    import './game-module.js';
+    import { runBrowserAudit } from './qa-self-audit.js?qa=2';
+    const status = document.querySelector('#status');
+    try {
+      const results = await runBrowserAudit();
+      status.innerHTML = `<strong class="pass">PASS: 0 unresolved errors</strong><ul>${results.map(result => `<li class="pass">${result.name}: ${result.status}</li>`).join('')}</ul><p>FSM, fixture integrity, distractors, audio mappings, rapid transitions, feedback hints, and spaced-repetition completion updates passed.</p>`;
+    } catch (error) {
+      status.innerHTML = `<strong class="fail">FAIL</strong><p><code>${error.message}</code></p>`;
+      throw error;
+    }
+  </script>
+</body>
+</html>
