@@ -13,9 +13,10 @@
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="overrides.css">
   <link rel="stylesheet" href="enhanced.css">
-  <link rel="stylesheet" href="vocabulary-enhanced.css?version=6">
+  <link rel="stylesheet" href="vocabulary-enhanced.css?version=9">
 </head>
 <body>
+  <canvas id="bg"></canvas>
   <main id="auth-screen" class="auth-screen">
     <section class="auth-card">
       <p class="eyebrow">Wordloom</p>
@@ -107,6 +108,7 @@
 
   <div id="quick-word-popover" hidden></div>
   <div id="dictionary-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="dictionary-title" aria-hidden="true" hidden><div class="modal"><button data-close-modal type="button">Close</button><div id="dictionary-content"></div></div></div>
+  <div id="book-preview-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="book-preview-title" aria-hidden="true" hidden><section class="book-preview-modal"></section></div>
   <div id="preferences-modal" class="modal-backdrop hidden"><div class="modal settings-modal"><button data-close-modal type="button">Close</button><div class="settings-heading"><span class="eyebrow">Your reading room</span><h2>Settings</h2><p>Shape Wordloom around the way you learn.</p></div><label>Mother language<select id="mother-language"><option value="ar">العربية</option><option value="en">English</option><option value="fr">français</option><option value="es">español</option><option value="tr">Türkçe</option><option value="de">Deutsch</option></select></label><label>Color mood<select id="color-mode-setting"><option value="fern">Fern</option><option value="coral">Coral</option><option value="sky">Sky</option><option value="amber">Amber</option></select></label><button id="save-preferences" type="button">Save settings</button></div></div>
   <div id="welcome-modal" class="modal-backdrop hidden"><section class="welcome-modal" role="dialog" aria-modal="true" aria-labelledby="welcome-title"><p class="eyebrow">Your reading room</p><h2 id="welcome-title">Let’s make Wordloom yours.</h2><p class="welcome-copy">Choose your mother language so definitions and translations feel natural from the very first page.</p><label class="welcome-field" for="welcome-language">Mother language<select id="welcome-language"><option value="ar">العربية · Arabic</option><option value="en">English</option><option value="fr">français · French</option><option value="es">español · Spanish</option><option value="tr">Türkçe · Turkish</option><option value="de">Deutsch · German</option></select></label><button id="finish-welcome" type="button">Start reading <span>→</span></button></section></div>
   <div id="source-modal" class="modal-backdrop hidden">
@@ -125,7 +127,133 @@
   <div id="streak-detail" hidden></div><div id="streak-title" hidden></div><div id="toast" role="status"></div>
   <input id="pdf-input" type="file" accept="application/pdf,.txt" hidden><button id="import-pdf" hidden type="button">Import PDF</button>
   <script type="module" src="game-module.js?version=2"></script>
-  <script src="app.js?version=7"></script>
+  <script src="app.js?version=13"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script>
+    const MOODS = {
+      sunset: { bg: '#1b1030', orbs: ['#ff8c5a', '#ff5a8c', '#ffbe50', '#be5aff'] },
+      focus:  { bg: '#0a1428', orbs: ['#47cfff', '#5a82ff', '#00e6c8', '#82beff'] },
+      night:  { bg: '#070714', orbs: ['#9678ff', '#6450dc', '#ff78c8', '#5a5ae6'] },
+      play:   { bg: '#081a16', orbs: ['#50ffaa', '#ffdc5a', '#3cdcff', '#96ff6e'] }
+    };
+    const moodAliases = { fern: 'play', coral: 'sunset', sky: 'focus', amber: 'night' };
+
+    const canvas = document.getElementById('bg');
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0x0b1026, 0.05);
+    const targetFog = new THREE.Color(0x0b1026);
+    const camera = new THREE.PerspectiveCamera(60, innerWidth / innerHeight, 0.1, 100);
+    camera.position.z = 8;
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+    renderer.setSize(innerWidth, innerHeight);
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+
+    function glowTexture() {
+      const textureCanvas = document.createElement('canvas');
+      textureCanvas.width = textureCanvas.height = 256;
+      const context = textureCanvas.getContext('2d');
+      const gradient = context.createRadialGradient(128, 128, 0, 128, 128, 128);
+      gradient.addColorStop(0, 'rgba(255,255,255,1)');
+      gradient.addColorStop(1, 'rgba(255,255,255,0)');
+      context.fillStyle = gradient;
+      context.fillRect(0, 0, 256, 256);
+      return new THREE.CanvasTexture(textureCanvas);
+    }
+
+    const glow = glowTexture();
+    const orbs = [];
+    const targetColors = [];
+    const start = MOODS.sunset.orbs;
+    for (let i = 0; i < 6; i++) {
+      const material = new THREE.SpriteMaterial({
+        map: glow, color: start[i % start.length], blending: THREE.AdditiveBlending,
+        depthWrite: false, transparent: true, opacity: .24 + Math.random() * .14
+      });
+      const sprite = new THREE.Sprite(material);
+      const scale = 3 + Math.random() * 3;
+      sprite.scale.set(scale, scale, 1);
+      sprite.position.set((Math.random() - 0.5) * 14, (Math.random() - 0.5) * 8, -2 - Math.random() * 4);
+      sprite.userData = { speed: 0.2 + Math.random() * 0.3, phase: Math.random() * Math.PI * 2 };
+      scene.add(sprite);
+      orbs.push(sprite);
+      targetColors.push(new THREE.Color(start[i % start.length]));
+    }
+
+    const particleCount = 340;
+    const positions = new Float32Array(particleCount * 3);
+    for (let i = 0; i < positions.length; i++) positions[i] = (Math.random() - 0.5) * 24;
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    const particles = new THREE.Points(geometry, new THREE.PointsMaterial({
+      size: 0.035, map: glow, color: 0xffffff, transparent: true, opacity: 0.42,
+      blending: THREE.AdditiveBlending, depthWrite: false
+    }));
+    scene.add(particles);
+
+    const twinklingStars = [];
+    for (let i = 0; i < 34; i++) {
+      const material = new THREE.SpriteMaterial({
+        map: glow, color: 0xe8f2ff, transparent: true, opacity: 0.24,
+        blending: THREE.AdditiveBlending, depthWrite: false
+      });
+      const star = new THREE.Sprite(material);
+      const baseSize = 0.035 + Math.random() * 0.075;
+      star.scale.set(baseSize, baseSize, 1);
+      star.position.set((Math.random() - .5) * 22, (Math.random() - .5) * 13, -2 - Math.random() * 6);
+      star.userData = { baseSize, speed: 0.7 + Math.random() * 1.6, phase: Math.random() * Math.PI * 2 };
+      scene.add(star);
+      twinklingStars.push(star);
+    }
+
+    let mouseX = 0;
+    let mouseY = 0;
+    addEventListener('mousemove', event => {
+      mouseX = event.clientX / innerWidth - 0.5;
+      mouseY = event.clientY / innerHeight - 0.5;
+    });
+    addEventListener('resize', () => {
+      camera.aspect = innerWidth / innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(innerWidth, innerHeight);
+    });
+
+    function setMood(name) {
+      const mood = MOODS[moodAliases[name] || name];
+      if (!mood) return;
+      targetFog.set(mood.bg);
+      document.body.style.setProperty('background', mood.bg, 'important');
+      document.body.style.setProperty('background-color', mood.bg, 'important');
+      document.body.style.setProperty('background-image', 'none', 'important');
+      orbs.forEach((orb, index) => targetColors[index].set(mood.orbs[index % mood.orbs.length]));
+    }
+    window.setMood = setMood;
+    setMood(['fern', 'coral', 'sky', 'amber'].find(mood => document.body.classList.contains(`mood-${mood}`)) || 'play');
+
+    const clock = new THREE.Clock();
+    function animate() {
+      requestAnimationFrame(animate);
+      const time = clock.getElapsedTime();
+      scene.fog.color.lerp(targetFog, 0.04);
+      orbs.forEach(orb => {
+        orb.position.x += Math.sin(time * orb.userData.speed + orb.userData.phase) * 0.003;
+        orb.position.y += Math.cos(time * orb.userData.speed * 0.8 + orb.userData.phase) * 0.003;
+        orb.material.color.lerp(targetColors[orbs.indexOf(orb)], 0.04);
+      });
+      twinklingStars.forEach(star => {
+        const twinkle = (Math.sin(time * star.userData.speed + star.userData.phase) + 1) / 2;
+        const size = star.userData.baseSize * (.72 + twinkle * .8);
+        star.scale.set(size, size, 1);
+        star.material.opacity = .14 + twinkle * .5;
+      });
+      particles.rotation.y = time * 0.02;
+      particles.position.y = Math.sin(time * 0.15) * 0.3;
+      camera.position.x += (mouseX * 1.5 - camera.position.x) * 0.04;
+      camera.position.y += (-mouseY - camera.position.y) * 0.04;
+      camera.lookAt(0, 0, 0);
+      renderer.render(scene, camera);
+    }
+    animate();
+  </script>
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js'));

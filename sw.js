@@ -1,4 +1,4 @@
-const CACHE_NAME = 'wordloom-shell-v14';
+const CACHE_NAME = 'wordloom-shell-v19';
 const APP_SHELL = [
   './',
   './index.html',

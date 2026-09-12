@@ -130,7 +130,10 @@ body.mood-amber { --canvas: #fbf0d9; --paper: rgba(255, 251, 239, .86); --green:
 
 /* Final product pass: establish a quieter editorial rhythm around the content. */
 body { min-height: 100vh; overflow-x: hidden; }
-.app-shell { position: relative; z-index: 1; }
+html, body { margin: 0; min-height: 100%; }
+body { transition: background 1s; }
+#bg { position: fixed; inset: 0; z-index: 0; display: block; pointer-events: none; }
+.auth-screen, .app-shell { position: relative; z-index: 1; }
 .main-content { flex: 1; }
 .topbar { position: sticky; top: 0; z-index: 20; box-shadow: 0 12px 35px rgba(11, 7, 18, .16); }
 #library-view, #vocabulary-view, #reading-view { animation: view-arrive .55s cubic-bezier(.2, .8, .2, 1) both; }
@@ -414,6 +417,54 @@ body:not(.theme-dark) .flashcard { box-shadow: 0 22px 70px rgba(30, 101, 170, .1
 body:not(.theme-dark) #story-copy .reader-page { background: linear-gradient(105deg, #ffffff, #f7fbff 72%, #eaf4ff); color: #102a43; }
 body.theme-dark #story-copy .reader-page { background: linear-gradient(105deg, rgba(28,18,48,.98), rgba(20,12,38,.98) 72%, rgba(42,24,67,.98)); box-shadow: 22px 20px 0 rgba(139,92,246,.08), 0 25px 70px rgba(11,7,18,.4); }
 @media (max-width: 700px) { #story-copy { height: calc(100svh - 275px); min-height: 480px; } #story-copy .reader-page { padding: 28px 24px 34px !important; border-radius: 8px 18px 18px 8px; } #story-copy .reader-page p { font-size: 17px !important; line-height: 1.78 !important; } }
+
+/* Space moods: keep the interface readable while letting the animated void show through. */
+html, body { background-color: #070714; }
+body.mood-fern::after, body.mood-coral::after, body.mood-sky::after, body.mood-amber::after { display: none; }
+body.mood-fern, body.mood-coral, body.mood-sky, body.mood-amber {
+  --ink: #eef4ff;
+  --muted: #9eabc4;
+  --paper: rgba(18, 24, 43, .72);
+  --line: rgba(174, 201, 255, .18);
+  --green: #73d8ba;
+  --green-dark: #3ca58c;
+  --mint: rgba(115, 216, 186, .14);
+  --coral: #ffae88;
+  --gold: #f5d77b;
+  --shadow: 0 24px 60px rgba(0, 0, 0, .32);
+  color: var(--ink);
+}
+body.mood-fern .topbar, body.mood-fern .sidebar, body.mood-coral .topbar, body.mood-coral .sidebar,
+body.mood-sky .topbar, body.mood-sky .sidebar, body.mood-amber .topbar, body.mood-amber .sidebar {
+  background: rgba(10, 16, 30, .68) !important;
+  backdrop-filter: blur(18px);
+}
+body.mood-fern .mini-book, body.mood-fern .review-card, body.mood-fern .game-card,
+body.mood-coral .mini-book, body.mood-coral .review-card, body.mood-coral .game-card,
+body.mood-sky .mini-book, body.mood-sky .review-card, body.mood-sky .game-card,
+body.mood-amber .mini-book, body.mood-amber .review-card, body.mood-amber .game-card {
+  background: rgba(18, 24, 43, .72) !important;
+  box-shadow: var(--shadow);
+}
+body.mood-fern .mini-info, body.mood-coral .mini-info, body.mood-sky .mini-info, body.mood-amber .mini-info {
+  background: rgba(18, 24, 43, .74) !important;
+}
+body.mood-fern .mini-info h3, body.mood-fern h1, body.mood-fern h2, body.mood-fern h3,
+body.mood-coral .mini-info h3, body.mood-coral h1, body.mood-coral h2, body.mood-coral h3,
+body.mood-sky .mini-info h3, body.mood-sky h1, body.mood-sky h2, body.mood-sky h3,
+body.mood-amber .mini-info h3, body.mood-amber h1, body.mood-amber h2, body.mood-amber h3 { color: var(--ink); }
+body.mood-fern .library-tabs, body.mood-fern .play-tabs, body.mood-fern .vocab-toolbar,
+body.mood-coral .library-tabs, body.mood-coral .play-tabs, body.mood-coral .vocab-toolbar,
+body.mood-sky .library-tabs, body.mood-sky .play-tabs, body.mood-sky .vocab-toolbar,
+body.mood-amber .library-tabs, body.mood-amber .play-tabs, body.mood-amber .vocab-toolbar { background: rgba(12, 18, 34, .6); }
+body.mood-fern h1, body.mood-fern h2, body.mood-fern h3, body.mood-fern .mini-info h3,
+body.mood-coral h1, body.mood-coral h2, body.mood-coral h3, body.mood-coral .mini-info h3,
+body.mood-sky h1, body.mood-sky h2, body.mood-sky h3, body.mood-sky .mini-info h3,
+body.mood-amber h1, body.mood-amber h2, body.mood-amber h3, body.mood-amber .mini-info h3 { color: #eef4ff !important; text-shadow: 0 2px 18px rgba(0, 0, 0, .35); }
+body.mood-fern .mini-info p, body.mood-fern .book-facts, body.mood-fern .review-instruction,
+body.mood-coral .mini-info p, body.mood-coral .book-facts, body.mood-coral .review-instruction,
+body.mood-sky .mini-info p, body.mood-sky .book-facts, body.mood-sky .review-instruction,
+body.mood-amber .mini-info p, body.mood-amber .book-facts, body.mood-amber .review-instruction { color: #b9c7df !important; }
 
 .reader-top-actions { display: flex; justify-content: flex-start; margin-bottom: 16px; }
 .reader-preview { margin: 0 0 18px; }
@@ -1133,3 +1184,272 @@ body.mood-fern::after, body.mood-coral::after, body.mood-sky::after, body.mood-a
 .library-level-filter .level-button { color: var(--green-dark) !important; border-color: var(--line) !important; background: transparent !important; }
 .library-level-filter .level-button:hover, .library-level-filter .level-button.active { color: #fff !important; background: var(--green) !important; border-color: var(--green) !important; }
 @media (max-width: 700px) { .mini-info { min-height: 182px; } }
+
+/* Quiet space reading mode: the star field leads, while the interface stays soft and low-contrast. */
+html { background: #070914 !important; }
+body.mood-fern, body.mood-coral, body.mood-sky, body.mood-amber {
+  --ink: #edf2ff !important;
+  --muted: #aeb8cc !important;
+  --paper: rgba(10, 15, 29, .72) !important;
+  --line: rgba(190, 207, 255, .16) !important;
+  --green: var(--space-accent) !important;
+  --green-dark: #edf2ff !important;
+  --mint: var(--space-accent-soft) !important;
+  --coral: var(--space-accent) !important;
+  --shadow: 0 18px 48px rgba(0, 0, 0, .28) !important;
+  --space-control: rgba(255, 255, 255, .055);
+  --space-control-hover: rgba(255, 255, 255, .1);
+  background: transparent !important;
+  color: var(--ink) !important;
+}
+body.mood-fern { --space-accent: #74d1b4; --space-accent-soft: rgba(116, 209, 180, .18); }
+body.mood-coral { --space-accent: #f6a18a; --space-accent-soft: rgba(246, 161, 138, .18); }
+body.mood-sky { --space-accent: #85c9f4; --space-accent-soft: rgba(133, 201, 244, .18); }
+body.mood-amber { --space-accent: #bdaeff; --space-accent-soft: rgba(189, 174, 255, .18); }
+
+body.mood-fern::before, body.mood-coral::before, body.mood-sky::before, body.mood-amber::before,
+body.mood-fern::after, body.mood-coral::after, body.mood-sky::after, body.mood-amber::after {
+  display: none;
+}
+body.mood-fern .auth-screen, body.mood-coral .auth-screen, body.mood-sky .auth-screen, body.mood-amber .auth-screen,
+body.mood-fern .app-shell, body.mood-coral .app-shell, body.mood-sky .app-shell, body.mood-amber .app-shell,
+body.mood-fern .main-content, body.mood-coral .main-content, body.mood-sky .main-content, body.mood-amber .main-content {
+  background: transparent !important;
+}
+body.mood-fern .auth-card, body.mood-coral .auth-card, body.mood-sky .auth-card, body.mood-amber .auth-card,
+body.mood-fern .topbar, body.mood-coral .topbar, body.mood-sky .topbar, body.mood-amber .topbar,
+body.mood-fern .sidebar, body.mood-coral .sidebar, body.mood-sky .sidebar, body.mood-amber .sidebar {
+  background: rgba(8, 13, 26, .7) !important;
+  border-color: var(--line) !important;
+  backdrop-filter: blur(18px) saturate(.9);
+}
+body.mood-fern .mini-book, body.mood-coral .mini-book, body.mood-sky .mini-book, body.mood-amber .mini-book,
+body.mood-fern .mini-info, body.mood-coral .mini-info, body.mood-sky .mini-info, body.mood-amber .mini-info,
+body.mood-fern .game-card, body.mood-coral .game-card, body.mood-sky .game-card, body.mood-amber .game-card,
+body.mood-fern .review-card, body.mood-coral .review-card, body.mood-sky .review-card, body.mood-amber .review-card,
+body.mood-fern .reader-preview-card, body.mood-coral .reader-preview-card, body.mood-sky .reader-preview-card, body.mood-amber .reader-preview-card,
+body.mood-fern #story-copy .reader-page, body.mood-coral #story-copy .reader-page, body.mood-sky #story-copy .reader-page, body.mood-amber #story-copy .reader-page,
+body.mood-fern .modal, body.mood-coral .modal, body.mood-sky .modal, body.mood-amber .modal,
+body.mood-fern .welcome-modal, body.mood-coral .welcome-modal, body.mood-sky .welcome-modal, body.mood-amber .welcome-modal,
+body.mood-fern .source-modal, body.mood-coral .source-modal, body.mood-sky .source-modal, body.mood-amber .source-modal,
+body.mood-fern .source-card, body.mood-coral .source-card, body.mood-sky .source-card, body.mood-amber .source-card,
+body.mood-fern .reading-streak, body.mood-coral .reading-streak, body.mood-sky .reading-streak, body.mood-amber .reading-streak {
+  background: rgba(11, 17, 32, .74) !important;
+  border-color: var(--line) !important;
+  box-shadow: var(--shadow) !important;
+}
+body.mood-fern #story-copy .reader-page, body.mood-coral #story-copy .reader-page,
+body.mood-sky #story-copy .reader-page, body.mood-amber #story-copy .reader-page {
+  color: var(--ink) !important;
+  box-shadow: 0 18px 48px rgba(0, 0, 0, .25) !important;
+}
+body.mood-fern h1, body.mood-coral h1, body.mood-sky h1, body.mood-amber h1,
+body.mood-fern h2, body.mood-coral h2, body.mood-sky h2, body.mood-amber h2,
+body.mood-fern h3, body.mood-coral h3, body.mood-sky h3, body.mood-amber h3 {
+  color: var(--ink) !important;
+  text-shadow: none !important;
+}
+body.mood-fern .book-author, body.mood-coral .book-author, body.mood-sky .book-author, body.mood-amber .book-author,
+body.mood-fern .book-facts, body.mood-coral .book-facts, body.mood-sky .book-facts, body.mood-amber .book-facts,
+body.mood-fern .game-card-summary p:not(.game-kicker), body.mood-coral .game-card-summary p:not(.game-kicker), body.mood-sky .game-card-summary p:not(.game-kicker), body.mood-amber .game-card-summary p:not(.game-kicker),
+body.mood-fern .review-card p, body.mood-coral .review-card p, body.mood-sky .review-card p, body.mood-amber .review-card p {
+  color: var(--muted) !important;
+}
+
+body.mood-fern .library-tabs, body.mood-coral .library-tabs, body.mood-sky .library-tabs, body.mood-amber .library-tabs,
+body.mood-fern .library-level-filter, body.mood-coral .library-level-filter, body.mood-sky .library-level-filter, body.mood-amber .library-level-filter,
+body.mood-fern #library-search, body.mood-coral #library-search, body.mood-sky #library-search, body.mood-amber #library-search,
+body.mood-fern select, body.mood-coral select, body.mood-sky select, body.mood-amber select,
+body.mood-fern input, body.mood-coral input, body.mood-sky input, body.mood-amber input {
+  background: rgba(8, 13, 26, .58) !important;
+  color: var(--ink) !important;
+  border-color: var(--line) !important;
+}
+body.mood-fern .nav-item, body.mood-coral .nav-item, body.mood-sky .nav-item, body.mood-amber .nav-item,
+body.mood-fern .icon-button, body.mood-coral .icon-button, body.mood-sky .icon-button, body.mood-amber .icon-button,
+body.mood-fern .settings-button, body.mood-coral .settings-button, body.mood-sky .settings-button, body.mood-amber .settings-button,
+body.mood-fern .library-tab, body.mood-coral .library-tab, body.mood-sky .library-tab, body.mood-amber .library-tab,
+body.mood-fern .level-button, body.mood-coral .level-button, body.mood-sky .level-button, body.mood-amber .level-button,
+body.mood-fern .game-launch, body.mood-coral .game-launch, body.mood-sky .game-launch, body.mood-amber .game-launch,
+body.mood-fern .review-listen, body.mood-coral .review-listen, body.mood-sky .review-listen, body.mood-amber .review-listen,
+body.mood-fern .review-choices button, body.mood-coral .review-choices button, body.mood-sky .review-choices button, body.mood-amber .review-choices button,
+body.mood-fern .game-next, body.mood-coral .game-next, body.mood-sky .game-next, body.mood-amber .game-next,
+body.mood-fern .sound-button, body.mood-coral .sound-button, body.mood-sky .sound-button, body.mood-amber .sound-button,
+body.mood-fern .reader-control, body.mood-coral .reader-control, body.mood-sky .reader-control, body.mood-amber .reader-control {
+  background: var(--space-control) !important;
+  color: var(--ink) !important;
+  border: 1px solid var(--line) !important;
+  box-shadow: none !important;
+}
+body.mood-fern .nav-item.active, body.mood-coral .nav-item.active, body.mood-sky .nav-item.active, body.mood-amber .nav-item.active,
+body.mood-fern .library-tab.active, body.mood-coral .library-tab.active, body.mood-sky .library-tab.active, body.mood-amber .library-tab.active,
+body.mood-fern .level-button.active, body.mood-coral .level-button.active, body.mood-sky .level-button.active, body.mood-amber .level-button.active,
+body.mood-fern .game-card.is-active .game-launch, body.mood-coral .game-card.is-active .game-launch, body.mood-sky .game-card.is-active .game-launch, body.mood-amber .game-card.is-active .game-launch {
+  background: var(--space-accent-soft) !important;
+  border-color: var(--space-accent) !important;
+  color: var(--ink) !important;
+}
+body.mood-fern .nav-item:hover, body.mood-coral .nav-item:hover, body.mood-sky .nav-item:hover, body.mood-amber .nav-item:hover,
+body.mood-fern .icon-button:hover, body.mood-coral .icon-button:hover, body.mood-sky .icon-button:hover, body.mood-amber .icon-button:hover,
+body.mood-fern .settings-button:hover, body.mood-coral .settings-button:hover, body.mood-sky .settings-button:hover, body.mood-amber .settings-button:hover,
+body.mood-fern .library-tab:hover, body.mood-coral .library-tab:hover, body.mood-sky .library-tab:hover, body.mood-amber .library-tab:hover,
+body.mood-fern .level-button:hover, body.mood-coral .level-button:hover, body.mood-sky .level-button:hover, body.mood-amber .level-button:hover,
+body.mood-fern .game-launch:hover, body.mood-coral .game-launch:hover, body.mood-sky .game-launch:hover, body.mood-amber .game-launch:hover,
+body.mood-fern .review-listen:hover, body.mood-coral .review-listen:hover, body.mood-sky .review-listen:hover, body.mood-amber .review-listen:hover,
+body.mood-fern .review-choices button:hover:not(:disabled), body.mood-coral .review-choices button:hover:not(:disabled), body.mood-sky .review-choices button:hover:not(:disabled), body.mood-amber .review-choices button:hover:not(:disabled),
+body.mood-fern .game-next:hover, body.mood-coral .game-next:hover, body.mood-sky .game-next:hover, body.mood-amber .game-next:hover,
+body.mood-fern .sound-button:hover, body.mood-coral .sound-button:hover, body.mood-sky .sound-button:hover, body.mood-amber .sound-button:hover,
+body.mood-fern .reader-control:hover, body.mood-coral .reader-control:hover, body.mood-sky .reader-control:hover, body.mood-amber .reader-control:hover {
+  background: var(--space-control-hover) !important;
+  border-color: var(--space-accent) !important;
+  color: var(--ink) !important;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, .18) !important;
+  transform: translateY(-1px) !important;
+}
+body.mood-fern .small-read-button, body.mood-coral .small-read-button, body.mood-sky .small-read-button, body.mood-amber .small-read-button,
+body.mood-fern .primary-button, body.mood-coral .primary-button, body.mood-sky .primary-button, body.mood-amber .primary-button,
+body.mood-fern .read-button, body.mood-coral .read-button, body.mood-sky .read-button, body.mood-amber .read-button,
+body.mood-fern #add-book, body.mood-coral #add-book, body.mood-sky #add-book, body.mood-amber #add-book,
+body.mood-fern #save-preferences, body.mood-coral #save-preferences, body.mood-sky #save-preferences, body.mood-amber #save-preferences,
+body.mood-fern #finish-welcome, body.mood-coral #finish-welcome, body.mood-sky #finish-welcome, body.mood-amber #finish-welcome,
+body.mood-fern .auth-card form button, body.mood-coral .auth-card form button, body.mood-sky .auth-card form button, body.mood-amber .auth-card form button,
+body.mood-fern .review-next, body.mood-coral .review-next, body.mood-sky .review-next, body.mood-amber .review-next,
+body.mood-fern .mini-primary, body.mood-coral .mini-primary, body.mood-sky .mini-primary, body.mood-amber .mini-primary {
+  background: var(--space-accent-soft) !important;
+  color: var(--ink) !important;
+  border: 1px solid var(--space-accent) !important;
+  box-shadow: none !important;
+}
+body.mood-fern .small-read-button:hover, body.mood-coral .small-read-button:hover, body.mood-sky .small-read-button:hover, body.mood-amber .small-read-button:hover,
+body.mood-fern .primary-button:hover, body.mood-coral .primary-button:hover, body.mood-sky .primary-button:hover, body.mood-amber .primary-button:hover,
+body.mood-fern .read-button:hover, body.mood-coral .read-button:hover, body.mood-sky .read-button:hover, body.mood-amber .read-button:hover,
+body.mood-fern #add-book:hover, body.mood-coral #add-book:hover, body.mood-sky #add-book:hover, body.mood-amber #add-book:hover,
+body.mood-fern #save-preferences:hover, body.mood-coral #save-preferences:hover, body.mood-sky #save-preferences:hover, body.mood-amber #save-preferences:hover,
+body.mood-fern #finish-welcome:hover, body.mood-coral #finish-welcome:hover, body.mood-sky #finish-welcome:hover, body.mood-amber #finish-welcome:hover,
+body.mood-fern .auth-card form button:hover, body.mood-coral .auth-card form button:hover, body.mood-sky .auth-card form button:hover, body.mood-amber .auth-card form button:hover,
+body.mood-fern .review-next:hover, body.mood-coral .review-next:hover, body.mood-sky .review-next:hover, body.mood-amber .review-next:hover,
+body.mood-fern .mini-primary:hover, body.mood-coral .mini-primary:hover, body.mood-sky .mini-primary:hover, body.mood-amber .mini-primary:hover {
+  background: var(--space-accent-soft) !important;
+  border-color: var(--space-accent) !important;
+  filter: brightness(1.12);
+}
+body.mood-fern .nav-symbol, body.mood-coral .nav-symbol, body.mood-sky .nav-symbol, body.mood-amber .nav-symbol {
+  background: var(--space-accent-soft) !important;
+  color: var(--space-accent) !important;
+}
+body.mood-fern .text-button, body.mood-coral .text-button, body.mood-sky .text-button, body.mood-amber .text-button {
+  color: var(--space-accent) !important;
+}
+body.mood-fern :focus-visible, body.mood-coral :focus-visible, body.mood-sky :focus-visible, body.mood-amber :focus-visible {
+  outline: 2px solid var(--space-accent) !important;
+  outline-offset: 3px;
+}
+
+/* Book covers use a quiet double frame, like small editions resting in the night library. */
+.mini-cover {
+  margin: 6px 6px 0;
+  border: 1px solid rgba(238, 245, 255, .34) !important;
+  border-radius: 12px 12px 4px 4px !important;
+  box-shadow: inset 0 0 0 5px rgba(6, 10, 22, .34), inset 0 0 0 6px rgba(255, 255, 255, .12), 0 10px 24px rgba(0, 0, 0, .2) !important;
+}
+.mini-cover::before {
+  content: '';
+  position: absolute;
+  z-index: 3;
+  inset: 10px;
+  border: 1px solid rgba(255, 255, 255, .28);
+  border-radius: 7px;
+  box-shadow: inset 0 0 18px rgba(255, 255, 255, .08);
+  pointer-events: none;
+}
+.mini-cover .cover-favorite-button { z-index: 4; }
+.cover-button:hover .mini-cover, .cover-button:focus-visible .mini-cover {
+  border-color: var(--space-accent) !important;
+  box-shadow: inset 0 0 0 5px rgba(6, 10, 22, .28), inset 0 0 0 6px rgba(255, 255, 255, .16), 0 0 22px var(--space-accent-soft), 0 14px 28px rgba(0, 0, 0, .24) !important;
+}
+.cover-button:hover .cover-photo { transform: scale(1.04); }
+
+#book-preview-modal { z-index: 110; background: rgba(2, 5, 14, .64) !important; backdrop-filter: blur(14px); }
+.book-preview-modal {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(180px, .76fr) minmax(0, 1.24fr);
+  width: min(720px, calc(100vw - 32px));
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: rgba(9, 14, 28, .94);
+  color: var(--ink);
+  box-shadow: 0 28px 80px rgba(0, 0, 0, .48), 0 0 0 1px rgba(255, 255, 255, .04);
+  animation: book-preview-arrive .28s ease-out both;
+}
+.book-preview-modal .modal-close {
+  position: absolute;
+  z-index: 5;
+  top: 14px;
+  right: 14px;
+  border-color: rgba(255, 255, 255, .22);
+  background: rgba(6, 10, 21, .52);
+  color: #f4f7ff;
+}
+.book-preview-cover {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  min-height: 390px;
+  overflow: hidden;
+  padding: 22px;
+  background: #192745;
+  border-right: 1px solid var(--line);
+  isolation: isolate;
+}
+.book-preview-cover::before {
+  content: '';
+  position: absolute;
+  z-index: 3;
+  inset: 14px;
+  border: 1px solid rgba(255, 255, 255, .38);
+  border-radius: 10px;
+  box-shadow: inset 0 0 0 5px rgba(7, 11, 23, .22), inset 0 0 28px rgba(255, 255, 255, .1);
+  pointer-events: none;
+}
+.book-preview-cover::after {
+  content: '';
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(8, 12, 25, .04) 28%, rgba(5, 8, 19, .76));
+  pointer-events: none;
+}
+.book-preview-cover .cover-photo { transition: transform .45s ease; }
+.book-preview-cover:hover .cover-photo { transform: scale(1.045); }
+.book-preview-mark, .book-preview-kicker { position: relative; z-index: 4; color: #fff; }
+.book-preview-mark { position: absolute; top: 32px; left: 34px; font: 700 35px/1 "Space Grotesk", sans-serif; opacity: .92; }
+.book-preview-kicker { font: 700 10px "DM Sans", sans-serif; letter-spacing: .16em; text-transform: uppercase; }
+.book-preview-copy { display: flex; flex-direction: column; padding: 42px 32px 30px; }
+.book-preview-heading { display: flex; align-items: start; justify-content: space-between; gap: 16px; }
+.book-preview-heading .eyebrow { color: var(--space-accent); }
+.book-preview-heading h2 { max-width: 360px; margin: 0; font-size: clamp(28px, 4vw, 42px); line-height: 1; }
+.book-preview-heading + p { margin: 15px 0 20px; color: var(--muted); font: 17px/1.5 "DM Sans", sans-serif; }
+.book-preview-favorite { display: inline-grid; flex: 0 0 auto; place-items: center; width: 38px; height: 38px; border: 1px solid var(--line); border-radius: 50%; background: var(--space-control); color: var(--ink); cursor: pointer; }
+.book-preview-favorite.active { border-color: var(--space-accent); background: var(--space-accent-soft); color: var(--space-accent); }
+.book-preview-facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 0 0 19px; }
+.book-preview-facts div { min-width: 0; padding: 10px; border: 1px solid var(--line); border-radius: 10px; background: rgba(255, 255, 255, .035); }
+.book-preview-facts dt { color: var(--muted); font: 700 9px "DM Sans", sans-serif; letter-spacing: .1em; text-transform: uppercase; }
+.book-preview-facts dd { margin: 5px 0 0; overflow: hidden; color: var(--ink); font: 700 11px/1.25 "DM Sans", sans-serif; text-overflow: ellipsis; white-space: nowrap; }
+.book-preview-description { margin: 0; color: var(--muted); line-height: 1.6; }
+.book-preview-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: auto; padding-top: 24px; }
+.book-preview-actions .mini-secondary, .book-preview-actions .mini-primary { min-height: 42px; border-radius: 10px; }
+.book-preview-actions .mini-secondary { border-color: var(--line); background: var(--space-control); color: var(--ink); }
+.book-preview-actions .mini-primary { display: inline-flex; align-items: center; gap: 9px; }
+@keyframes book-preview-arrive { from { opacity: 0; transform: translateY(10px) scale(.985); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@media (max-width: 620px) {
+  .book-preview-modal { grid-template-columns: 1fr; max-height: calc(100vh - 28px); overflow: auto; }
+  .book-preview-cover { min-height: 210px; border-right: 0; border-bottom: 1px solid var(--line); }
+  .book-preview-copy { padding: 28px 20px 22px; }
+  .book-preview-mark { top: 28px; left: 30px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .book-preview-modal { animation: none; }
+  .cover-button:hover .cover-photo, .book-preview-cover:hover .cover-photo { transform: none; }
+}

@@ -900,6 +900,62 @@ function renderBooks() {
   }).join('') : '<p class="empty-state">No books match your search and filters.</p>';
   organizeLibraryShelves();
 }
+function renderBookPreviewModal() {
+  const modal = document.querySelector('#book-preview-modal');
+  const preview = modal?.querySelector('.book-preview-modal');
+  if (!modal || !preview || !activeBook) return;
+  const photoSet = coverPhotos[activeBook.topic] || coverPhotos.life;
+  const photo = photoSet[coverPhotoIndex[activeBook.title] % photoSet.length];
+  const cover = coverDetails[activeBook.topic] || coverDetails.life;
+  const isFavorite = favoriteBooks.has(activeBook.title);
+  preview.innerHTML = `
+    <button class="modal-close" data-book-preview-close type="button" aria-label="Close book preview">Close</button>
+    <div class="book-preview-cover ${activeBook.cover} cover-${activeBook.topic}" aria-hidden="true">
+      <img class="cover-photo" src="${photo}" alt="" onerror="this.hidden=true;this.parentElement.classList.add('cover-photo-fallback')">
+      <span class="cover-art"></span>
+      <span class="book-preview-mark">${cover[2]}</span>
+      <span class="book-preview-kicker">${cover[0]}</span>
+    </div>
+    <div class="book-preview-copy">
+      <div class="book-preview-heading"><div><p class="eyebrow">Ready to read</p><h2 id="book-preview-title">${activeBook.title}</h2></div><button class="book-preview-favorite ${isFavorite ? 'active' : ''}" type="button" data-favorite-book="${activeBook.title}" aria-label="${isFavorite ? 'Remove from favorites' : 'Add to favorites'}">♥</button></div>
+      <p>${cover[1]}</p>
+      <dl class="book-preview-facts"><div><dt>Level</dt><dd>${activeBook.level}</dd></div><div><dt>Length</dt><dd>${activeBook.length || 'Short lesson'}</dd></div><div><dt>Source</dt><dd>${activeBook.source}</dd></div></dl>
+      <p class="book-preview-description">${topicDescriptions[activeBook.topic] || 'A focused reading experience built for steady, confident learning.'}</p>
+      <div class="book-preview-actions"><button class="mini-secondary" data-book-preview-close type="button">Not now</button><button class="mini-primary" data-book-preview-start="${activeBook.title}" type="button">Start reading <span>→</span></button></div>
+    </div>
+  `;
+  preview.querySelectorAll('[data-book-preview-close]').forEach(button => button.addEventListener('click', event => {
+    event.preventDefault();
+    event.stopPropagation();
+    closeBookPreview(true);
+  }, { once: true }));
+  preview.querySelectorAll('[data-book-preview-close]').forEach(button => button.addEventListener('pointerdown', event => {
+    event.preventDefault();
+    event.stopPropagation();
+    closeBookPreview(true);
+  }, { once: true }));
+}
+function openBookPreview(bookTitle) {
+  activeBook = books.find(book => book.title === bookTitle) || activeBook;
+  if (!activeBook) return;
+  const modal = document.querySelector('#book-preview-modal');
+  renderBookPreviewModal();
+  modal.removeAttribute('hidden');
+  modal.classList.remove('hidden');
+  modal.style.removeProperty('display');
+  modal.setAttribute('aria-hidden', 'false');
+  requestAnimationFrame(() => modal.querySelector('[data-book-preview-start]')?.focus());
+}
+function closeBookPreview(returnToLibrary = false) {
+  const modal = document.querySelector('#book-preview-modal');
+  if (!modal) return;
+  modal.classList.add('hidden');
+  modal.setAttribute('hidden', '');
+  modal.setAttribute('aria-hidden', 'true');
+  modal.style.setProperty('display', 'none', 'important');
+  modal.querySelector('.book-preview-modal')?.replaceChildren();
+  if (returnToLibrary) showView('library');
+}
 async function downloadLibrary() {
   const button = document.querySelector('#download-library');
   const status = document.querySelector('#library-download-status');
@@ -1040,7 +1096,7 @@ function moveReader(step) {
   renderReaderState();
 }
 function showView(viewName) { Object.values(views).forEach(view => view.classList.add('hidden')); views[viewName].classList.remove('hidden'); document.querySelectorAll('.nav-item').forEach(item => item.classList.toggle('active', item.dataset.view === viewName)); const labelMap = { library: 'Library', vocabulary: 'Review', play: 'Play', reading: 'Reading room' }; document.querySelector('.breadcrumb strong').textContent = labelMap[viewName] || 'Library'; document.querySelector('.sidebar').classList.remove('mobile-open'); }
-function openReader(bookTitle = activeBook.title) { activeBook = books.find(book => book.title === bookTitle) || activeBook; readerState = { page: 0 }; showView('reading'); renderReaderState(); }
+function openReader(bookTitle = activeBook.title) { activeBook = books.find(book => book.title === bookTitle) || activeBook; readerState = { page: 0 }; closeBookPreview(); showView('reading'); renderReaderState(); }
 function closeModals() { document.querySelectorAll('.modal-backdrop').forEach(modal => { modal.classList.add('hidden'); modal.setAttribute('hidden', ''); modal.setAttribute('aria-hidden', 'true'); }); }
 function saveWordToVocabulary(key, sentence) {
   const data = dictionary[key] || [key, 'A useful word from this story.', 'word', ''];
@@ -1063,7 +1119,7 @@ function showDictionary(word) {
   localStorage.setItem('wordloom-reading-metrics', JSON.stringify(readingMetrics));
   updateReadingStats();
   const languageLabel = translations[motherLanguage] || translations.en;
-  content.innerHTML = `<span class="detail-label">WORD</span><h3 id="dictionary-title">${key}</h3><div class="translation-line"><span>Translation · ${languageLabel}</span><strong>${translation || 'Translation unavailable'}</strong></div><div class="context-box"><span class="phrase-label">IN THIS PHRASE</span><p>“${activeWordContext}”</p></div><div class="modal-actions"><button class="speak-word" data-speak="${key}" type="button">Hear word</button><button class="modal-save" data-learn-word="${key}" type="button">${savedWords.has(key) ? 'Learned' : 'Learn this word'}</button><button class="modal-unknown" data-unknown-word="${key}" type="button">I don’t know</button><button class="modal-know" data-know-word="${key}" type="button">I know it</button></div>`;
+  content.innerHTML = `<span class="detail-label">WORD</span><h3 id="dictionary-title">${key}</h3><div class="translation-line"><span>Translation · ${languageLabel}</span><strong>${translation || 'Translation unavailable'}</strong></div><div class="context-box"><span class="phrase-label">IN THIS PHRASE</span><p>“${activeWordContext}”</p></div><div class="modal-actions"><button class="speak-word" data-speak="${key}" type="button">Hear word</button><button class="modal-save" data-learn-word="${key}" type="button"${savedWords.has(key) ? ' disabled' : ''}>${savedWords.has(key) ? 'Added to review' : 'Add to review'}</button></div>`;
   modal.removeAttribute('hidden');
   modal.classList.remove('hidden');
   modal.setAttribute('aria-hidden', 'false');
@@ -1076,8 +1132,8 @@ function getWordTranslation(key, data) {
   if (motherLanguage === 'en') return data[1] || key;
   return 'Translation unavailable';
 }
-function showFullDictionary(key) { const modal = document.querySelector('#dictionary-modal'); const content = document.querySelector('#dictionary-content'); const data = dictionary[key] || [key, 'A useful word from this story.', 'word', `The word “${key}” appears in this story.`]; const translation = getWordTranslation(key, data); const languageLabel = translations[motherLanguage] || translations.en; content.innerHTML = `<span class="detail-label">WORD IN CONTEXT</span><h3 id="dictionary-title">${key}</h3><span class="word-pronounce">/${key}/ · ${data[2]}</span><p class="word-definition">${data[1]}</p><div class="translation-line"><span>Translation · ${languageLabel}</span><strong>${translation || 'Translation unavailable'}</strong></div><div class="detail-label" style="display:block;margin-top:22px">ANOTHER EXAMPLE</div><div class="modal-example">${activeWordContext || data[3]}</div><div class="modal-actions"><button class="speak-word" data-speak="${key}" type="button">Hear word</button><button class="modal-save" data-learn-word="${key}" type="button">Learn this word</button><button class="modal-know" data-know-word="${key}" type="button">I know it</button></div>`; modal.removeAttribute('hidden'); modal.classList.remove('hidden'); document.querySelector('#quick-word-popover')?.classList.add('hidden'); }
-function applyColorMood(mood) { const moods = ['mood-fern', 'mood-coral', 'mood-sky', 'mood-amber']; document.body.classList.remove('theme-dark', ...moods); document.body.classList.add(`mood-${moods.includes(`mood-${mood}`) ? mood : 'fern'}`); }
+function showFullDictionary(key) { const modal = document.querySelector('#dictionary-modal'); const content = document.querySelector('#dictionary-content'); const data = dictionary[key] || [key, 'A useful word from this story.', 'word', `The word “${key}” appears in this story.`]; const translation = getWordTranslation(key, data); const languageLabel = translations[motherLanguage] || translations.en; content.innerHTML = `<span class="detail-label">WORD IN CONTEXT</span><h3 id="dictionary-title">${key}</h3><span class="word-pronounce">/${key}/ · ${data[2]}</span><p class="word-definition">${data[1]}</p><div class="translation-line"><span>Translation · ${languageLabel}</span><strong>${translation || 'Translation unavailable'}</strong></div><div class="detail-label" style="display:block;margin-top:22px">ANOTHER EXAMPLE</div><div class="modal-example">${activeWordContext || data[3]}</div><div class="modal-actions"><button class="speak-word" data-speak="${key}" type="button">Hear word</button><button class="modal-save" data-learn-word="${key}" type="button"${savedWords.has(key) ? ' disabled' : ''}>${savedWords.has(key) ? 'Added to review' : 'Add to review'}</button></div>`; modal.removeAttribute('hidden'); modal.classList.remove('hidden'); document.querySelector('#quick-word-popover')?.classList.add('hidden'); }
+function applyColorMood(mood) { const moods = ['mood-fern', 'mood-coral', 'mood-sky', 'mood-amber']; const selectedMood = moods.includes(`mood-${mood}`) ? mood : 'fern'; document.body.classList.remove('theme-dark', ...moods); document.body.classList.add(`mood-${selectedMood}`); if (window.setMood) window.setMood(selectedMood); }
 function savePreferences() { motherLanguage = document.querySelector('#mother-language').value; const mood = document.querySelector('#color-mode-setting').value; localStorage.setItem('wordloom-language', motherLanguage); localStorage.setItem('wordloom-mood', mood); applyColorMood(mood); renderVocabulary(); closeModals(); showToast('Settings saved'); }
 function buildReviewPlan(record = {}) {
   const repetition = Number(record.repetitions || 0);
@@ -1237,7 +1293,13 @@ const savedMood = localStorage.getItem('wordloom-mood') || 'fern';
 document.querySelector('#mother-language').value = motherLanguage; document.querySelector('#color-mode-setting').value = savedMood; applyColorMood(savedMood);
 updateFlowMetric();
 document.querySelectorAll('.nav-item').forEach(button => button.addEventListener('click', () => button.dataset.view === 'reading' ? openReader() : showView(button.dataset.view))); document.querySelector('.library-tab[data-library-tab="all"]').addEventListener('click', () => { activeLibraryTab = 'all'; renderBooks(); updateLibraryTabs(); }); document.querySelector('.library-tab[data-library-tab="favorites"]').addEventListener('click', () => { activeLibraryTab = 'favorites'; renderBooks(); updateLibraryTabs(); }); document.querySelector('.library-tab[data-library-tab="history"]').addEventListener('click', () => { activeLibraryTab = 'history'; renderBooks(); updateLibraryTabs(); }); document.querySelector('#back-to-library').addEventListener('click', () => showView('library')); document.querySelector('#import-pdf').addEventListener('click', () => document.querySelector('#pdf-input').click()); document.querySelector('#pdf-input').addEventListener('change', event => { const file = event.target.files[0]; if (file) showToast(`${file.name} added. PDF reader setup is next.`); event.target.value = ''; });
-document.querySelector('.settings-button').addEventListener('click', () => openModal('#preferences-modal')); document.querySelector('#save-preferences').addEventListener('click', savePreferences); document.querySelectorAll('[data-close-modal]').forEach(button => button.addEventListener('click', closeModals)); document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.addEventListener('click', event => { if (event.target === backdrop) closeModals(); })); document.querySelectorAll('.topic-button').forEach(button => button.addEventListener('click', () => { document.querySelectorAll('.topic-button').forEach(item => item.classList.remove('active')); button.classList.add('active'); selectedTopic = button.dataset.topic; renderBooks(); }));
+document.querySelector('.settings-button').addEventListener('click', () => openModal('#preferences-modal')); document.querySelector('#save-preferences').addEventListener('click', savePreferences); document.querySelectorAll('[data-close-modal]').forEach(button => button.addEventListener('click', closeModals)); document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.addEventListener('click', event => { if (event.target !== backdrop || backdrop.id === 'book-preview-modal') return; closeModals(); })); document.querySelectorAll('.topic-button').forEach(button => button.addEventListener('click', () => { document.querySelectorAll('.topic-button').forEach(item => item.classList.remove('active')); button.classList.add('active'); selectedTopic = button.dataset.topic; renderBooks(); }));
+document.querySelector('#book-preview-modal').addEventListener('click', event => {
+  if (!event.target.closest('[data-book-preview-close]') && event.target !== event.currentTarget) return;
+  event.preventDefault();
+  event.stopPropagation();
+  closeBookPreview(true);
+});
 document.querySelectorAll('.accent-choice').forEach(button => button.addEventListener('click', () => { document.querySelectorAll('.accent-choice').forEach(item => item.classList.remove('active')); button.classList.add('active'); document.body.classList.remove('accent-coral', 'accent-blue', 'accent-violet'); if (button.dataset.accent !== 'green') document.body.classList.add(`accent-${button.dataset.accent}`); })); document.querySelectorAll('.reader-control').forEach(button => button.addEventListener('click', () => { const step = button.textContent.includes('Previous') ? -1 : 1; moveReader(step); })); document.querySelectorAll('.top-actions .icon-button')[0].addEventListener('click', () => showToast('Search will cover your books and vocabulary.')); document.querySelectorAll('.top-actions .icon-button')[1].addEventListener('click', () => showToast('You are all caught up.')); document.querySelector('.mobile-menu').addEventListener('click', () => document.querySelector('.sidebar').classList.toggle('mobile-open'));
 document.querySelector('.top-actions [aria-label="Open search"]').addEventListener('click', () => { showView('library'); document.querySelector('#library-search').focus(); }); document.querySelector('.mobile-menu').addEventListener('click', () => document.querySelector('.sidebar').classList.toggle('mobile-open'));
 const storyCopy = document.querySelector('#story-copy');
@@ -1276,12 +1338,19 @@ document.addEventListener('click', event => {
     persistFavoriteBooks();
     renderBooks();
     if (activeBook && activeBook.title === title) renderReaderPreview();
+    if (!document.querySelector('#book-preview-modal')?.hasAttribute('hidden')) renderBookPreviewModal();
     return;
   }
 
   const readButton = event.target.closest('[data-read-book]');
   if (readButton) {
-    openReader(readButton.dataset.readBook);
+    openBookPreview(readButton.dataset.readBook);
+    return;
+  }
+
+  const bookPreviewStart = event.target.closest('[data-book-preview-start]');
+  if (bookPreviewStart) {
+    openReader(bookPreviewStart.dataset.bookPreviewStart);
     return;
   }
 
@@ -1302,7 +1371,7 @@ document.addEventListener('click', event => {
 
   const word = event.target.closest('.word'); if (word) { showDictionary(word); return; }
   const more = event.target.closest('[data-more-word]'); if (more) { showFullDictionary(more.dataset.moreWord); return; }
-  const learn = event.target.closest('[data-learn-word]'); if (learn) { saveWordToVocabulary(learn.dataset.learnWord, activeWordContext); learn.textContent = 'Learned'; renderVocabulary(); showToast(`${learn.dataset.learnWord} added to your review cards`); return; }
+  const learn = event.target.closest('[data-learn-word]'); if (learn) { saveWordToVocabulary(learn.dataset.learnWord, activeWordContext); learn.textContent = 'Added to review'; learn.disabled = true; renderVocabulary(); showToast(`${learn.dataset.learnWord} added to your review cards`); return; }
   const unknown = event.target.closest('[data-unknown-word]'); if (unknown) { saveWordToVocabulary(unknown.dataset.unknownWord, activeWordContext); vocabularyRecords[unknown.dataset.unknownWord].unknown = true; vocabularyRecords[unknown.dataset.unknownWord].repetitions = 0; localStorage.setItem('wordloom-vocabulary-records', JSON.stringify(vocabularyRecords)); unknown.textContent = 'Added to review'; showToast(`${unknown.dataset.unknownWord} added to your review game`); return; }
   const know = event.target.closest('[data-know-word]'); if (know) { saveWordToVocabulary(know.dataset.knowWord, activeWordContext); vocabularyRecords[know.dataset.knowWord].unknown = false; vocabularyRecords[know.dataset.knowWord].repetitions = 4; localStorage.setItem('wordloom-vocabulary-records', JSON.stringify(vocabularyRecords)); know.textContent = 'Known'; showToast(`${know.dataset.knowWord} marked as known`); return; }
   const reviewListen = event.target.closest('[data-review-speak]'); if (reviewListen) { speakText(reviewListen.dataset.reviewSpeak); return; }
@@ -1362,7 +1431,7 @@ document.querySelectorAll('.vocab-filter').forEach(button => button.addEventList
 document.addEventListener('click', event => {
   const book = event.target.closest('[data-book]');
   if (book && !event.target.closest('[data-favorite-book]') && !event.target.closest('[data-read-book]')) {
-    openReader(book.dataset.book);
+    openBookPreview(book.dataset.book);
   }
 
   const shelf = event.target.closest('[data-shelf-topic]');
@@ -1371,6 +1440,14 @@ document.addEventListener('click', event => {
     const topicButton = document.querySelector(`.topic-button[data-topic="${topic}"]`);
     if (topicButton) { topicButton.click(); } else { window.scrollTo({ top: 0, behavior: 'smooth' }); }
   }
+});
+document.addEventListener('keydown', event => {
+  const book = event.target.closest('[data-book]');
+  if (book && (event.key === 'Enter' || event.key === ' ')) {
+    event.preventDefault();
+    openBookPreview(book.dataset.book);
+  }
+  if (event.key === 'Escape' && !document.querySelector('#book-preview-modal')?.hasAttribute('hidden')) closeBookPreview(true);
 });
 function updateLibraryTabs() {
   document.querySelectorAll('.library-tab').forEach(button => {
